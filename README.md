@@ -3,6 +3,10 @@ This project visualizes reported fraud and scam incidents submitted to Canadian 
 
 ### Team Members
 Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs, Mark Adler
+1. Eugenie Huang
+2. Mark Adler
+3. Darbie Gibbs
+4. Elijah Gardner Woods
 
 ### Final Proposal
 1. Persona/Scenario
