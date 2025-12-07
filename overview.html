@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Big Picture</title>
+
+    <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/overview.css">
+</head>
+
+<body>
+    <header class="flex items-center justify-between py-3 border-b">
+        <h1><a href="index.html" class="font-semibold">Canada Fraud Watch</a></h1>
+        <ul class="flex items-center space-x-3 m-0 p-0">
+            <li><a href="index.html" class="px-3 py-1 rounded text-gray-700 hover:bg-gray-100">Personal Risk</a></li>
+            <li><a href="overview.html" class="px-3 py-1 rounded bg-blue-700 text-white">The Big Picture</a></li>
+            <li><a href="comparison.html" class="px-3 py-1 rounded text-gray-700 hover:bg-gray-100">Side-by-Side</a></li>
+        </ul>
+    </header>
+
+    <div id="controls">
+        <div>
+            Metric:
+            <label><input type="radio" name="metric" value="cases" checked> Cases</label>
+            <label><input type="radio" name="metric" value="loss"> Loss ($)</label>
+        </div>
+        <div>
+            Gender:
+            <select id="genderSelect"></select>
+        </div>
+        <div>
+            Age range:
+            <select id="ageSelect"></select>
+        </div>
+        <div style="align-items: center;">
+            <span>Year:</span>
+            <input id="yearSlider" type="range">
+            <span id="yearLabel"></span>
+            <button id="allYearsBtn" class="active rounded" type="button">All years</button>
+        </div>
+    </div>
+
+    <div id="layout">
+        <div class="panel" id="mapPanel">
+            <div class="panel-title">
+                <span>Choropleth map</span>
+                <span id="mapTitleMetric" style="font-size:11px;color:#6b7280;"></span>
+            </div>
+            <div class="panel-subtitle" id="mapSubtitle"></div>
+            <div id="mapContainer">
+                <svg id="map"></svg>
+                <div id="mapLegend">
+                    <div id="legendLabel"></div>
+                    <div id="mapLegendGradient"></div>
+                    <div id="legendScale" style="display:flex;justify-content:space-between;font-size:10px;">
+                        <span id="legendMin">0</span>
+                        <span id="legendMax">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="chartsPanel">
+            <div id="chartsContainer">
+                <div class="chart" id="trendChartContainer">
+                    <div class="panel-title">
+                        <span>Trend over time</span>
+                    </div>
+                    <div class="panel-subtitle">
+                        Click a point on the line to select that year.
+                    </div>
+                    <svg id="trendChart"></svg>
+                </div>
+
+                <div class="chart" id="barChartContainer">
+                    <div class="panel-title">
+                        <span>Top regions for selected year</span>
+                    </div>
+                    <div class="panel-subtitle" id="barSubtitle"></div>
+                    <svg id="barChart"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- D3 + topojson from CDN -->
+    <script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script type="text/javascript" src="js/overview.js"></script>
+    <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
+</body>
+
+</html>

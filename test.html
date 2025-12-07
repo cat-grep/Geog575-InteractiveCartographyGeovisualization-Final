@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Canada Provinces Map (D3)</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: #f5f5f5;
+        }
+
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .province {
+            stroke: #ffffff;
+            stroke-width: 0.7;
+            cursor: pointer;
+        }
+
+        .province:hover {
+            stroke: #111827;
+            stroke-width: 1.2;
+        }
+
+        .tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(17, 24, 39, 0.95);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <svg id="map"></svg>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3.select("#map")
+            .attr("width", width)
+            .attr("height", height);
+
+        const tooltip = d3.select("#tooltip");
+
+        // Load the GeoJSON file 
+        d3.json("data/CanadaProvincesCartoBoundary_EPSG4326.geojson").then(geojson => {
+            const projection = d3.geoConicConformal()
+                .parallels([49, 77])
+                .center([-91.52, 56])
+                .rotate([110, 27, 43])
+                .scale(800)
+                .translate([width / 2, height / 2]);
+
+            const path = d3.geoPath().projection(projection);
+
+            // Simple color scale
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            console.log(geojson);
+            svg.selectAll("path.province")
+                .data(geojson.features)
+                .enter()
+                .append("path")
+                .attr("class", "province")
+                .attr("d", path)
+                .attr("fill", (d, i) => color(i))
+                .on("mousemove", (event, d) => {
+                    const props = d.properties || {};
+                    const provinceName =
+                        props.PRENAME || props.name || props.PROV_NAME || "Unknown";
+
+                    tooltip
+                        .style("display", "block")
+                        .style("left", (event.clientX + 10) + "px")
+                        .style("top", (event.clientY + 10) + "px")
+                        .html(`<strong>${provinceName}</strong>`);
+                })
+                .on("mouseleave", () => {
+                    tooltip.style("display", "none");
+                });
+        }).catch(err => {
+            console.error("Error loading GeoJSON:", err);
+        });
+    </script>
+</body>
+
+</html>
