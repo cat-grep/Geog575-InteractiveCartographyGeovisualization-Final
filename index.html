@@ -6,26 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Personal Risk</title>
 
-    <!--put your external stylesheet links here-->
-    <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./lib/bootstrap.min.css">
 
     <link rel="stylesheet" href="css/style.css">
-    <!--[if IE<9]>
-            <link rel="stylesheet" href="css/style.ie.css">
-        <![endif]-->
 
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">Canada Fraud Watch</a>
 
-    <header class="flex items-center justify-between py-3 border-b">
-        <h1><a href="index.html" class="font-semibold">Canada Fraud Watch</a></h1>
-        <ul class="flex items-center space-x-3 m-0 p-0">
-            <li><a href="index.html" class="px-3 py-1 rounded bg-blue-700 text-white">Personal Risk</a></li>
-            <li><a href="overview.html" class="px-3 py-1 rounded text-gray-700 hover:bg-gray-100">The Big Picture</a></li>
-            <li><a href="comparison.html" class="px-3 py-1 rounded text-gray-700 hover:bg-gray-100">Side-by-Side</a></li>
-        </ul>
-    </header>
+            <!-- Mobile toggle button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Nav links -->
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <!-- mark current page as active -->
+                        <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
+                            href="index.html">
+                            Personal Risk
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="overview.html">The Big Picture</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="comparison.html">Side-by-Side</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="info.html">Learn About Fraud</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <div id="controls">
         <div>
@@ -39,32 +59,35 @@
         </div>
     </div>
 
-    <div id="summary">
-        <div id="summary-text">
-            Loading data…
-        </div>
-    </div>
-
-    <div id="pie-row">
-        <!-- <div>
-            <h3 class="text-lg font-semibold">Complaint Received Type</h3>
-            <svg id="pie-complaint" width="220" height="220"></svg>
-        </div> -->
-
-        <div>
-            <h3 class="text-lg font-semibold">Thematic Categories</h3>
-            <svg id="pie-category" width="220" height="220"></svg>
+    <div class="container-fluid">
+        <div id="summary">
+            <div id="summary-text">
+                Loading data…
+            </div>
         </div>
 
-        <div>
-            <h3 class="text-lg font-semibold">Solicitation Method</h3>
-            <svg id="pie-method" width="220" height="220"></svg>
-        </div>
-    </div>
+        <div id="pie-row">
+            <div>
+                <div class="panel-title">
+                    <span>Thematic Categories</span>
+                </div>
+                <svg id="pie-category" width="220" height="220"></svg>
+            </div>
 
-    <div id="trend-container">
-        <h3 class="text-lg font-semibold">Fraud Cases and Financial Loss Over Time</h3>
-        <svg id="trend-svg" width="700" height="300"></svg>
+            <div>
+                <div class="panel-title">
+                    <span>Solicitation Method</span>
+                </div>
+                <svg id="pie-method" width="220" height="220"></svg>
+            </div>
+        </div>
+
+        <div id="trend-container">
+            <div class="panel-title">
+                <span>Fraud Cases and Financial Loss Over Time</span>
+            </div>
+            <svg id="trend-svg" width="700" height="300"></svg>
+        </div>
     </div>
 
     <div class="tooltip" id="tooltip" style="display:none"></div>
@@ -81,7 +104,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
 
-    
+
 </body>
 
 </html>

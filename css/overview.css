@@ -12,7 +12,7 @@ input[type="radio"] {
     padding: 3px 8px;
     border: 1px solid #9ca3af;
     background: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
 }
 
@@ -29,31 +29,6 @@ input[type="radio"] {
     padding: 12px 16px 20px 16px;
     height: calc(100vh - 110px);
     box-sizing: border-box;
-}
-
-.panel {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    padding: 10px 12px 8px 12px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.panel-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.panel-subtitle {
-    font-size: 0.6rem;
-    color: #6b7280;
-    margin-bottom: 6px;
 }
 
 svg {
