@@ -1,0 +1,56 @@
+/* comparison.css */
+
+/* Ensure the SVG maps take up full width of the container */
+.map-container {
+  position: relative;
+}
+
+.map-container svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1; /* square-ish maps */
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.legend {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.legend .legend-item {
+  display: inline-block;
+  margin-right: 12px;
+  text-align: center;
+}
+
+.legend .legend-color-box {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  border: 1px solid #999;
+}
+
+.summary {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Tooltip style */
+.province-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background-color: rgba(255,255,255,0.9);
+  padding: 4px 8px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  visibility: hidden;
+  z-index: 10;
+}
+

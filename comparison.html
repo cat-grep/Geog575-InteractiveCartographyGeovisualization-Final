@@ -1,53 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Side-by-Side</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Side-by-Side Comparison – Canada Fraud Watch</title>
 
-    <link rel="stylesheet" href="./lib/bootstrap.min.css">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="./lib/bootstrap.min.css" />
 
-    <link rel="stylesheet" href="css/style.css">
+  <!-- Your custom CSS -->
+  <link rel="stylesheet" href="css/comparison.css" />
 </head>
-
 <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom py-3">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="index.html">Canada Fraud Watch</a>
+  <!-- Navbar (same as your other pages) -->
+  <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom py-3">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="index.html">Canada Fraud Watch</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <!-- Mobile toggle button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Personal Risk</a></li>
+          <li class="nav-item"><a class="nav-link" href="overview.html">The Big Picture</a></li>
+          <li class="nav-item">
+            <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
+               href="comparison.html">Side-by-Side</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="info.html">Learn About Fraud</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-            <!-- Nav links -->
-            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Personal Risk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="overview.html">The Big Picture</a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- mark current page as active -->
-                        <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
-                            href="comparison.html">
-                            Side-by-Side
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="info.html">Learn About Fraud</a>
-                    </li>
-                </ul>
-            </div>
+  <!-- Main content -->
+  <div class="container my-4">
+    <h2 class="mb-4">Compare Two Provinces Side‑by‑Side</h2>
+
+    <!-- Controls -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
+        <select id="provinceSelect1" class="form-select"></select>
+      </div>
+      <div class="col-md-4">
+        <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
+        <select id="provinceSelect2" class="form-select"></select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Metric</label>
+        <div class="btn-group" role="group" aria-label="Metric toggle">
+          <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off" checked>
+          <label class="btn btn-outline-primary" for="metricCases">Cases</label>
+
+          <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
+          <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
         </div>
-    </nav>
+      </div>
+    </div>
 
-    <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
+    <!-- Maps side-by-side -->
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="map-container">
+          <h5 id="mapTitle1">—</h5>
+          <svg id="map1"></svg>
+          <div id="legend1" class="legend"></div>
+          <div id="summary1" class="summary"></div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="map-container">
+          <h5 id="mapTitle2">—</h5>
+          <svg id="map2"></svg>
+          <div id="legend2" class="legend"></div>
+          <div id="summary2" class="summary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D3 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- Bootstrap JS (for navbar collapse) -->
+  <script src="./lib/bootstrap.bundle.min.js"></script>
+  <!-- Your custom JS -->
+  <script src="js/comparison.js"></script>
 </body>
-
 </html>
