@@ -45,10 +45,12 @@
         <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
         <select id="provinceSelect1" class="form-select"></select>
       </div>
+
       <div class="col-md-4">
         <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
         <select id="provinceSelect2" class="form-select"></select>
       </div>
+      
       <div class="col-md-4">
         <label class="form-label">Metric</label>
         <div class="btn-group" role="group" aria-label="Metric toggle">
@@ -71,6 +73,7 @@
           <div id="summary1" class="summary"></div>
         </div>
       </div>
+
       <div class="col-md-6 mb-4">
         <div class="map-container">
           <h5 id="mapTitle2">—</h5>
@@ -80,7 +83,27 @@
         </div>
       </div>
     </div>
+
+    <div class="charts-container">
+        <div id="charts-province1" class="province-chart-set">
+            <h3 id="charts-title1"></h3>
+            <div id="catChart1" class="chart"></div>
+            <div id="methodChart1" class="chart"></div>
+            <div id="ageChart1" class="chart"></div>
+            <div id="monthChart1" class="chart"></div>
+        </div>
+
+        <div id="charts-province2" class="province-chart-set">
+            <h3 id="charts-title2"></h3>
+            <div id="catChart2" class="chart"></div>
+            <div id="methodChart2" class="chart"></div>
+            <div id="ageChart2" class="chart"></div>
+            <div id="monthChart2" class="chart"></div>
+        </div>
+    </div>
+
   </div>
+  
 
   <!-- D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>

@@ -13,23 +13,45 @@
   background-color: #f9f9f9;
 }
 
-.legend {
-  margin-top: 8px;
-  font-size: 0.9rem;
+/* Legend positioned inside the map frame */
+.map-legend {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  pointer-events: none; /* avoids blocking hover on the map */
 }
 
-.legend .legend-item {
-  display: inline-block;
-  margin-right: 12px;
-  text-align: center;
+/* Framed legend box */
+.legend-inner-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  pointer-events: auto; /* allow hover interaction if needed */
 }
 
-.legend .legend-color-box {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 4px;
+.legend-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.legend-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-color-box {
+  width: 14px;
+  height: 14px;
   border: 1px solid #999;
 }
 
@@ -54,3 +76,24 @@
   z-index: 10;
 }
 
+.province-chart-set {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.chart {
+  display: inline-block;
+  width: 200px;
+  vertical-align: top;
+  margin: 10px;
+  text-align: center;
+}
+
+.chart-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
