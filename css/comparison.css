@@ -8,10 +8,51 @@
 .map-container svg {
   width: 100%;
   height: auto;
-  aspect-ratio: 1 / 1; /* square-ish maps */
+  aspect-ratio: 1.8 / 1; /* square-ish maps */
   border: 1px solid #ccc;
   background-color: #f9f9f9;
 }
+
+
+
+/* Year controls */
+.year-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0px 14px;
+  background: #eef0f3;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+#yearSlider {
+  width: 220px;
+}
+
+#yearLabel {
+  font-size: 1.1rem;
+  font-weight: 600;
+  min-width: 48px;
+  text-align: center;
+}
+
+#allYearsBtn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#allYearsBtn.active {
+  background: #000;
+  color: #fff;
+}
+
+
 
 /* Legend positioned inside the map frame */
 .map-legend {
@@ -25,7 +66,7 @@
 /* Framed legend box */
 .legend-inner-box {
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #666;
+  border: 1px solid #66666675;
   border-radius: 4px;
   padding: 6px 8px;
   font-size: 0.8rem;
@@ -52,7 +93,7 @@
 .legend-color-box {
   width: 14px;
   height: 14px;
-  border: 1px solid #999;
+  border: 1px solid #66666675;
 }
 
 .summary {
@@ -76,6 +117,9 @@
   z-index: 10;
 }
 
+
+
+/* Charts */
 .province-chart-set {
   margin-top: 20px;
   padding: 10px;
@@ -86,7 +130,7 @@
 
 .chart {
   display: inline-block;
-  width: 200px;
+  width: 240px;
   vertical-align: top;
   margin: 10px;
   text-align: center;
@@ -96,4 +140,33 @@
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 4px;
+}
+
+
+
+/* Month boxes */
+.top-months {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.month-box {
+  text-align: center;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #ffffff;
+  width: 90px;
+}
+
+.month-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.month-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #2a6ebb;
 }

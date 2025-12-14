@@ -8,21 +8,25 @@ const DATA_URL = "data/CanadianAnti-FraudCentreReportingData-EN-CA-only.json";
 let geojson, fraudData;
 let perProvYearMetrics = {};  // { year: { province: { cases: ..., loss: ... } } }
 let allProvinces = [];        // Sorted list of provinces for dropdowns
+let selectedYear = 2021;
+let showAllYears = false;
+
 
 // ----------- Data Loading ------------
 Promise.all([
-  d3.json(GEOJSON_URL),
-  d3.json(DATA_URL)
+    d3.json(GEOJSON_URL),
+    d3.json(DATA_URL)
 ])
 .then(([gjson, data]) => {
-  geojson = gjson;
-  fraudData = data;
-  preprocessData();
-  populateProvinceSelectors();
-  drawMaps();  // Initial draw
+    geojson = gjson;
+    fraudData = data;
+    preprocessData();
+    populateProvinceSelectors();
+    initYearControls();
+    drawMaps();  // Initial draw
 })
 .catch(err => {
-  console.error("Error loading data:", err);
+    console.error("Error loading data:", err);
 });
 
 // ----------- Preprocess the fraud data ------------
@@ -69,15 +73,90 @@ function populateProvinceSelectors() {
   d3.selectAll("input[name=metricRadio]").on("change", drawMaps);
 }
 
+
+// ----------- Create year controls ------------
+function initYearControls() {
+  const slider = d3.select("#yearSlider");
+  const label = d3.select("#yearLabel");
+  const btn = d3.select("#allYearsBtn");
+
+  const defaultYear = 2021;
+
+  // ---- Initial state on page load ----
+  selectedYear = defaultYear;
+  showAllYears = false;
+
+  slider.property("value", defaultYear);
+  slider.property("disabled", false);
+  label.text(defaultYear);
+  btn.classed("active", false);
+
+  // ---- Slider interaction ----
+  slider.on("input", function () {
+    selectedYear = +this.value;
+    showAllYears = false;
+
+    label.text(selectedYear);
+    btn.classed("active", false);
+    slider.property("disabled", false);
+
+    drawMaps();
+    drawProvinceCharts();
+  });
+
+  // ---- All-years toggle button ----
+  btn.on("click", function () {
+    if (showAllYears) {
+      // 🔄 TURN OFF all-years → reset to 2021
+      showAllYears = false;
+      selectedYear = defaultYear;
+
+      slider.property("value", defaultYear);
+      slider.property("disabled", false);
+      label.text(defaultYear);
+      btn.classed("active", false);
+    } else {
+      // 🔘 TURN ON all-years
+      showAllYears = true;
+
+      const maxYear = +slider.attr("max");
+      slider.property("value", maxYear);
+      slider.property("disabled", true);
+      label.text("All Years");
+      btn.classed("active", true);
+    }
+
+    drawMaps();
+    drawProvinceCharts();
+  });
+}
+
+
+
+
+
 // ----------- Main draw function (rebuilds both maps) ------------
 function drawMaps() {
   const prov1 = d3.select("#provinceSelect1").property("value");
   const prov2 = d3.select("#provinceSelect2").property("value");
   const metric = d3.select("input[name=metricRadio]:checked").property("value");
 
-  // Get latest year available in data
-  const latestYear = d3.max(Object.keys(perProvYearMetrics).map(Number));
-  const metrics = perProvYearMetrics[latestYear] || {};
+  // Process years available in data
+  let metrics = {};
+
+  if (showAllYears) {
+    // Aggregate across all years
+    Object.values(perProvYearMetrics).forEach(yearObj => {
+      Object.entries(yearObj).forEach(([prov, vals]) => {
+        if (!metrics[prov]) metrics[prov] = { cases: 0, loss: 0 };
+        metrics[prov].cases += vals.cases;
+        metrics[prov].loss += vals.loss;
+      });
+    });
+  } else {
+  metrics = perProvYearMetrics[selectedYear] || {};
+  }
+
 
   // Create value mapping: province → value (cases/loss)
   const valueByProv = {};
@@ -106,7 +185,6 @@ function drawMaps() {
 }
 
 // ----------- Render a single province map ------------
-// ----------- Render a single province map ------------
 function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv, colorScale) {
   const svg = d3.select(svgSelector);
   const container = svg.node().parentNode;
@@ -118,8 +196,8 @@ function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv
 
   // Map projection: centered with north up
   const projection = d3.geoConicConformal()
-    .center([-106, 65])
-    .rotate([65, 15, 0]) // no tilt so north is up
+    .center([-113, 42])
+    .rotate([45, 35, 30]) // no tilt so north is up
     .scale(width * 0.95)
     .translate([width / 2, height / 2]);
 
@@ -233,28 +311,35 @@ function drawProvinceCharts() {
 }
 
 function drawChartsForProvince(province, index) {
-  const dataForProv = fraudData.filter(d => d.region === province);
+    const dataForProv = fraudData.filter(d =>
+      d.region === province &&
+      (showAllYears || d.year === selectedYear)
+    );
 
-  // Prepare dataset aggregations
-  const categoryCounts = groupRare(countByField(dataForProv, "category"));
-  const methodCounts   = groupRare(countByField(dataForProv, "method"));
-  const ageCounts      = countByField(dataForProv, "ageRange");
 
-  // Month counts
-  const monthCounts = d3.rollup(
-    dataForProv,
-    v => v.length,
-    d => d3.timeFormat("%B")(new Date(d.date))
-  );
-  const monthData = Array.from(monthCounts, ([key, val]) => ({ key, val }));
+    // Prepare dataset aggregations
+    const categoryCounts = groupRare(countByField(dataForProv, "category"));
+    const methodCounts   = groupRare(countByField(dataForProv, "method"));
+    const ageCounts      = countByField(dataForProv, "ageRange");
 
-  d3.select(`#charts-title${index}`).text(`Charts for ${province}`);
+    // Month counts → Top 3 months
+    const monthCounts = d3.rollup(
+        dataForProv,
+        v => v.length,
+        d => d3.timeFormat("%B")(new Date(d.date))
+    );
 
-  // Draw pie charts
-  buildPieChart(`#catChart${index}`, categoryCounts, "Fraud / Cybercrime Categories");
-  buildPieChart(`#methodChart${index}`, methodCounts, "Solicitation Method");
-  buildPieChart(`#ageChart${index}`, ageCounts, "Victim Age Range");
-  buildPieChart(`#monthChart${index}`, monthData, "Month Reported");
+    const topMonths = Array.from(monthCounts, ([key, val]) => ({ key, val }))
+        .sort((a, b) => d3.ascending(b.val, a.val))
+        .slice(0, 3);
+
+    d3.select(`#charts-title${index}`).text(`Charts for ${province}`);
+
+    // Draw pie charts
+    buildPieChart(`#catChart${index}`, categoryCounts, "Fraud / Cybercrime Categories");
+    buildPieChart(`#methodChart${index}`, methodCounts, "Solicitation Method");
+    buildPieChart(`#ageChart${index}`, ageCounts, "Victim Age Range");
+    buildTopMonths(`#monthChart${index}`, topMonths);
 }
 
 // ----------- Utility: count occurrences of a string field ------------
@@ -267,10 +352,10 @@ function countByField(data, field) {
   return Array.from(map, ([key, val]) => ({ key, val }));
 }
 
-// ----------- Group items contributing < 3% into "Other" ------------
+// ----------- Group items contributing < 2.5% of the total into the "Others" catigory ------------
 function groupRare(arr) {
   const total = d3.sum(arr, d => d.val);
-  const cutoff = total * 0.03;   // 3% threshold
+  const cutoff = total * 0.025;   // 2.5% threshold
 
   const major = arr.filter(d => d.val >= cutoff);
   const minor = arr.filter(d => d.val < cutoff);
@@ -278,7 +363,7 @@ function groupRare(arr) {
   const minorTotal = d3.sum(minor, d => d.val);
 
   if (minorTotal > 0) {
-    major.push({ key: "Other", val: minorTotal });
+    major.push({ key: "Others", val: minorTotal });
   }
 
   return major;
@@ -334,4 +419,31 @@ function buildPieChart(containerSelector, data, title) {
     .attr("transform", d => `translate(${arc.centroid(d)})`)
     .style("font-size", "10px")
     .style("text-anchor", "middle");
+}
+
+// ---------------- Top 3 Months Renderer ----------------
+function buildTopMonths(containerSelector, data) {
+  const container = d3.select(containerSelector);
+  container.selectAll("*").remove();
+
+  container.append("div")
+    .attr("class", "chart-title")
+    .text("Top Months Reported - Number of Incidents");
+
+  const wrapper = container.append("div")
+    .attr("class", "top-months");
+
+  const monthBox = wrapper.selectAll(".month-box")
+    .data(data)
+    .enter()
+    .append("div")
+    .attr("class", "month-box");
+
+  monthBox.append("div")
+    .attr("class", "month-name")
+    .text(d => d.key);
+
+  monthBox.append("div")
+    .attr("class", "month-value")
+    .text(d => d.val);
 }

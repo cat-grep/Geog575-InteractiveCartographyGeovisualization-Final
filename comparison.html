@@ -50,7 +50,7 @@
         <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
         <select id="provinceSelect2" class="form-select"></select>
       </div>
-      
+
       <div class="col-md-4">
         <label class="form-label">Metric</label>
         <div class="btn-group" role="group" aria-label="Metric toggle">
@@ -60,9 +60,27 @@
           <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
           <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
         </div>
-      </div>
-    </div>
+        
+        <div class="year-controls">
+          <label for="yearSlider">Year:</label>
 
+          <input
+            type="range"
+            id="yearSlider"
+            min="2021"
+            max="2025"
+            step="1"
+            value="2025"
+          />
+
+          <span id="yearLabel">2025</span>
+
+          <button id="allYearsBtn">All Years</button>
+          </div>
+        </div>
+      </div>
+  </div>
+    
     <!-- Maps side-by-side -->
     <div class="row">
       <div class="col-md-6 mb-4">
