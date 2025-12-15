@@ -14,8 +14,11 @@ let defaultMaxDate = null;
 let defaultOneYearAgo = null;
 
 // PIE CHART --------------------------------
-const PIE_SIZE = 220;
-const PIE_RADIUS = PIE_SIZE / 2 - 10;
+const PIE_SIZE = 350;
+const PIE_RADIUS = PIE_SIZE / 2 - 50;
+
+// inner radius for circular barplot
+const CIRC_INNER_RADIUS = 50;
 
 const pie = d3.pie().value(d => d.value);
 const arc = d3.arc().innerRadius(0).outerRadius(PIE_RADIUS);
@@ -113,7 +116,7 @@ function initControls() {
 
   //date range inputs
   dateStartInput = d3.select("#dateStart");
-  dateEndInput   = d3.select("#dateEnd");
+  dateEndInput = d3.select("#dateEnd");
 
   // map metric selector (cases | loss)
   mapMetricSelect = d3.select("#mapMetricSelect");
@@ -182,73 +185,139 @@ function getFilters() {
 // -------------------------------------------------------------------
 // Update a pie chart given filtered data and an accessor function
 // -------------------------------------------------------------------
-// *** TODO: color scheme, labels, interactivity (mouseover), discuss: top N + "Others"
 function updatePieChart(svgGroup, filteredData, accessor) {
   if (!filteredData.length) {
     svgGroup.selectAll("*").remove();
     return;
   }
 
-  // Aggregate counts
+  // 1) Aggregate counts
   const aggregated = Array.from(
     d3.rollup(filteredData, v => v.length, accessor),
     ([key, value]) => ({ key: key || "Unknown", value })
   ).sort((a, b) => d3.descending(a.value, b.value));
 
-  // Optional: Keep top 6 categories
   const topN = aggregated.slice(0, 6);
   if (aggregated.length > 6) {
     const other = d3.sum(aggregated.slice(6), d => d.value);
     topN.push({ key: "Others", value: other });
   }
 
-  // Bind data
-  const arcs = svgGroup.selectAll("path")
-    // .data(pie(aggregated), d => d.data.key);
-    .data(pie(topN), d => d.data.key);
+  const dataForChart = topN;
+  const total = d3.sum(dataForChart, d => d.value);
 
-  arcs.enter()
-    .append("path")
-    .merge(arcs)
-    .attr("d", arc)
-    .attr("fill", (d, i) => d3.schemeSet3[i % 10]);
+  // 2) Scales
+  const x = d3.scaleBand()
+    .range([0, 2 * Math.PI])
+    .align(0)
+    .domain(dataForChart.map(d => d.key));
 
-  arcs.exit().remove();
+  const y = d3.scaleRadial()
+    .range([CIRC_INNER_RADIUS, PIE_RADIUS])
+    .domain([0, d3.max(dataForChart, d => d.value) || 1]);
 
-  // Labels
-  const labels = svgGroup.selectAll("text")
-    // .data(pie(aggregated), d => d.data.key);
-    .data(pie(topN), d => d.data.key);
+  const color = d3.scaleOrdinal()
+    .domain(dataForChart.map(d => d.key))
+    .range(d3.schemeSet3);
 
-  labels.enter()
-    .append("text")
-    .merge(labels)
-    .attr("transform", d => `translate(${arc.centroid(d)})`)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "10px")
-    .text(d => d.data.key);
-
-  labels.exit().remove();
-
-  // Interactivity: tooltip on hover for pie slices
   const tooltip = d3.select("#tooltip");
-  svgGroup.selectAll("path")
-    .on("mousemove", function (event, d) {
-      const html = `<strong>${d.data.key}</strong>: ${d.data.value}`;
-      tooltip.html(html)
+  const fmtInt = d3.format(",d");
+  const fmtPct = d3.format(".1%");
+
+  // 3) BARS (circular)
+  const bars = svgGroup.selectAll("path.circular-bar")
+    .data(dataForChart, d => d.key);
+
+  bars.enter()
+    .append("path")
+    .attr("class", "circular-bar")
+    .merge(bars)
+    .attr("fill", d => color(d.key))
+    .attr("d", d3.arc()
+      .innerRadius(CIRC_INNER_RADIUS)
+      .outerRadius(d => y(d.value))
+      .startAngle(d => x(d.key))
+      .endAngle(d => x(d.key) + x.bandwidth())
+      .padAngle(0.01)
+      .padRadius(CIRC_INNER_RADIUS)
+    )
+    .on("mousemove", (event, d) => {
+      const pct = total ? d.value / total : 0;
+      tooltip.html(
+        `<strong>${d.key}</strong><br>` +
+        `Count: ${fmtInt(d.value)}<br>` +
+        `Share: ${fmtPct(pct)}`
+      )
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY + 10) + "px")
+        .style("display", "block");
+    })
+    .on("mouseleave", () => {
+      tooltip.style("display", "none");
+    });
+
+  bars.exit().remove();
+
+  // 4) LABEL GROUPS
+  const labelGroups = svgGroup.selectAll("g.circular-label")
+    .data(dataForChart, d => d.key);
+
+  const labelEnter = labelGroups.enter()
+    .append("g")
+    .attr("class", "circular-label");
+
+  labelEnter.merge(labelGroups)
+    .attr("text-anchor", d => {
+      const angle = x(d.key) + x.bandwidth() / 2;
+      return (angle + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start";
+    })
+    .attr("transform", d => {
+      const angle = x(d.key) + x.bandwidth() / 2;
+      const r = y(d.value) + 10; // slightly outside the bar
+      const rotate = angle * 180 / Math.PI - 90;
+      return `rotate(${rotate})translate(${r},0)`;
+    })
+    // Tooltip on the whole label group
+    .on("mousemove", (event, d) => {
+      const pct = total ? d.value / total : 0;
+      tooltip.html(
+        `<strong>${d.key}</strong><br>` +
+        `Count: ${fmtInt(d.value)}<br>` +
+        `Share: ${fmtPct(pct)}`
+      )
         .style("left", (event.clientX + 10) + "px")
         .style("top", (event.clientY + 10) + "px")
         .style("display", "block");
     })
-    .on("mouseleave", function () {
+    .on("mouseleave", () => {
       tooltip.style("display", "none");
     });
+
+  // 5) LABEL TEXT (white)
+  const labels = labelEnter.merge(labelGroups).selectAll("text")
+    .data(d => [d]);
+
+  labels.enter()
+    .append("text")
+    .merge(labels)
+    .text(d => d.key)
+    .style("font-size", "10px")
+    .style("fill", "#ffffff")              // white labels
+    .attr("alignment-baseline", "middle")
+    .attr("transform", d => {
+      const angle = x(d.key) + x.bandwidth() / 2;
+      return (angle + Math.PI) % (2 * Math.PI) < Math.PI
+        ? "rotate(180)"
+        : "rotate(0)";
+    });
+
+  labels.exit().remove();
+  labelGroups.exit().remove();
 }
 
 // -------------------------------------------------------------------
 // Update the trend chart based on demographic filters
 // -------------------------------------------------------------------
-// *** TODO: add legend, axis labels, interactivity (mouseover)
 function updateTrendChart(demoFiltered) {
   // If no data, clear chart
   if (!demoFiltered.length) {
@@ -257,10 +326,15 @@ function updateTrendChart(demoFiltered) {
     xAxisG.selectAll("*").remove();
     yAxisLeftG.selectAll("*").remove();
     yAxisRightG.selectAll("*").remove();
+    trendG.select(".chart-legend").remove(); // Clear legend
     return;
   }
 
-  // Aggregate by year: cases & dollar loss
+  // --- 1. Colors Configuration ---
+  const colorCases = "#1b9e77";
+  const colorLoss = "#7570b3";
+
+  // Aggregate by year
   const yearly = Array.from(
     d3.rollup(
       demoFiltered,
@@ -301,57 +375,59 @@ function updateTrendChart(demoFiltered) {
   casesPath
     .datum(yearly)
     .attr("d", casesLine)
-    .attr("stroke", "#1b9e77"); // or set via CSS
+    .attr("stroke", colorCases)
+    .attr("fill", "none")
+    .attr("stroke-width", 2);
 
   lossPath
     .datum(yearly)
     .attr("d", lossLine)
-    .attr("stroke", "#7570b3"); // or set via CSS
+    .attr("stroke", colorLoss)
+    .attr("fill", "none")
+    .attr("stroke-width", 2);
 
-  // Axes
+  // --- 2. Axes with Color Alignment ---
   const xAxis = d3.axisBottom(x).ticks(yearly.length).tickFormat(d3.format("d"));
   const yAxisLeft = d3.axisLeft(yCases).ticks(4);
   const yAxisRight = d3.axisRight(yLoss).ticks(4);
 
   xAxisG.call(xAxis);
-  yAxisLeftG.call(yAxisLeft);
+
+  // Left Axis (Cases - Green)
+  yAxisLeftG.call(yAxisLeft)
+    .call(g => g.selectAll("text").attr("fill", colorCases)) // Color the text
+    .call(g => g.selectAll("line").attr("stroke", colorCases)) // Color the ticks
+    .call(g => g.select(".domain").attr("stroke", colorCases)); // Color the main axis line
+
+  // Right Axis (Loss - Purple)
   yAxisRightG
     .attr("transform", `translate(${trendInnerWidth},0)`)
-    .call(yAxisRight);
+    .call(yAxisRight)
+    .call(g => g.selectAll("text").attr("fill", colorLoss))
+    .call(g => g.selectAll("line").attr("stroke", colorLoss))
+    .call(g => g.select(".domain").attr("stroke", colorLoss));
 
-  // Draw / update vertical leading lines for tooltip interactivity
-  const fmtInt = d3.format(",d");
-  const fmtMoney = d3.format(",.2f");
-  const tooltip = d3.select("#tooltip");
 
-  // Bind data to vertical line elements
-  const leads = trendG.selectAll('.trend-lead')
-    .data(yearly, d => d.year);
+  // --- 3. Adding a Legend ---
+  // Remove existing legend to prevent duplicates on update
+  trendG.select(".chart-legend").remove();
 
-  // leads: vertical lines
-  leads.enter()
-    .append('line')
-    .attr('class', 'trend-lead')
-    .merge(leads)
-    .attr('x1', d => x(d.year))
-    .attr('x2', d => x(d.year))
-    .attr('y1', trendInnerHeight)
-    .attr('y2', d => yCases(d.cases))
-    .style('pointer-events', 'stroke')
-    .on('mousemove', function (event, d) {
-      const html = `<strong>${d.year}</strong><br/>Cases: ${fmtInt(d.cases)}<br/>Loss: $${fmtMoney(d.loss)}`;
-      tooltip.html(html)
-        .style('left', (event.clientX + 10) + 'px')
-        .style('top', (event.clientY + 10) + 'px')
-        .style('display', 'block');
-    })
-    .on('mouseleave', function () {
-      tooltip.style('display', 'none');
-    });
+  const legend = trendG.append("g")
+    .attr("class", "chart-legend")
+    .attr("transform", "translate(-50, -15)"); // Position top-left (adjust as needed)
 
-  leads.exit().remove();
+  // Legend Item 1: Cases
+  legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).style("fill", colorCases);
+  legend.append("text").attr("x", 10).attr("y", 4).text("Total Cases").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", colorCases);
 
-  // --- Hover interaction: dynamic dashed vertical line snapping to nearest year + points for both series
+  // Legend Item 2: Loss
+  legend.append("circle").attr("cx", 100).attr("cy", 0).attr("r", 5).style("fill", colorLoss);
+  legend.append("text").attr("x", 110).attr("y", 4).text("Dollar Loss").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", colorLoss);
+
+
+  // --- 4. Tooltip & Interactions ---
+  // Note: I removed the 'leads' section entirely. The overlay below handles everything.
+
   const overlay = trendG.selectAll('.trend-overlay').data([null]);
 
   overlay.enter()
@@ -366,19 +442,24 @@ function updateTrendChart(demoFiltered) {
     .attr('height', trendInnerHeight)
     .on('mousemove', function (event) {
       if (!yearly || !yearly.length) return;
+
       const [mx] = d3.pointer(event, this);
       const xVal = x.invert(mx);
-      // find nearest year
+
+      // Find nearest year
       let nearest = yearly[0];
       let minDiff = Math.abs(yearly[0].year - xVal);
       for (let i = 1; i < yearly.length; i++) {
         const diff = Math.abs(yearly[i].year - xVal);
-        if (diff < minDiff) { minDiff = diff; nearest = yearly[i]; }
+        if (diff < minDiff) {
+          minDiff = diff;
+          nearest = yearly[i];
+        }
       }
 
       const xPos = x(nearest.year);
 
-      // show hover vertical dashed line
+      // Show hover vertical dashed line
       const hoverLine = trendG.selectAll('.trend-hover-line').data([null]);
       hoverLine.enter().append('line').attr('class', 'trend-hover-line')
         .merge(hoverLine)
@@ -389,17 +470,16 @@ function updateTrendChart(demoFiltered) {
         .attr('stroke-dasharray', '4,4')
         .style('opacity', 0.9);
 
-      // show hover points for both series
+      // Show hover points
       const hoverPointCases = trendG.selectAll('.trend-hover-point-cases').data([nearest]);
       hoverPointCases.enter().append('circle').attr('class', 'trend-hover-point-cases')
         .attr('r', 5)
         .merge(hoverPointCases)
         .attr('cx', xPos)
         .attr('cy', d => yCases(d.cases))
-        .attr('fill', '#1b9e77')
+        .attr('fill', colorCases) // Using variable
         .attr('stroke', '#fff')
         .attr('stroke-width', 1)
-        .style('opacity', 1)
         .style('pointer-events', 'none');
 
       const hoverPointLoss = trendG.selectAll('.trend-hover-point-loss').data([nearest]);
@@ -408,20 +488,22 @@ function updateTrendChart(demoFiltered) {
         .merge(hoverPointLoss)
         .attr('cx', xPos)
         .attr('cy', d => yLoss(d.loss))
-        .attr('fill', '#7570b3')
+        .attr('fill', colorLoss) // Using variable
         .attr('stroke', '#fff')
         .attr('stroke-width', 1)
-        .style('opacity', 1)
         .style('pointer-events', 'none');
 
-      // Tooltip shows both metrics
+      // Tooltip
       const fmtInt2 = d3.format(',d');
       const fmtMoney2 = d3.format(',.2f');
-      const html = `<strong>${nearest.year}</strong><br/>Cases: ${fmtInt2(nearest.cases)}<br/>Loss: $${fmtMoney2(nearest.loss)}`;
+      const html = `<strong>${nearest.year}</strong><br/>
+                    <span style="color:${colorCases}">Cases: ${fmtInt2(nearest.cases)}</span><br/>
+                    <span style="color:${colorLoss}">Loss: $${fmtMoney2(nearest.loss)}</span>`;
+
       d3.select('#tooltip')
         .html(html)
-        .style('left', (event.clientX + 10) + 'px')
-        .style('top', (event.clienY + 10) + 'px')
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY + 10) + 'px')
         .style('display', 'block');
     })
     .on('mouseleave', function () {
@@ -432,7 +514,6 @@ function updateTrendChart(demoFiltered) {
     });
 
   overlay.exit().remove();
-
 }
 
 // -------------------------------------------------------------------
@@ -449,17 +530,17 @@ function updateControls() {
 
   if (dateStartInput && dateEndInput) {
     const startVal = dateStartInput.node().value;
-    const endVal   = dateEndInput.node().value;
+    const endVal = dateEndInput.node().value;
     const parseInput = d3.timeParse("%Y-%m-%d");
 
     if (startVal && endVal) {
       const startDate = parseInput(startVal);
-      const endDate   = parseInput(endVal);
+      const endDate = parseInput(endVal);
 
       // simple validation: only use if both are valid and start <= end
       if (startDate && endDate && startDate <= endDate) {
         oneYearAgo = startDate;
-        maxDate    = endDate;
+        maxDate = endDate;
       }
     }
   }
@@ -493,7 +574,7 @@ function updateControls() {
   <div class="row g-2">
     <!-- Cases card -->
     <div class="col-6 col-md-6">
-      <div class="card shadow-sm h-100">
+      <div class="card shadow-sm h-100 text-white bg-dark ">
         <div class="card-body">
           <p class="card-subtitle text-muted mb-1">Reported cases</p>
           <h3 class="card-title mb-0">${casesStr}</h3>
@@ -503,7 +584,7 @@ function updateControls() {
 
     <!-- Loss card -->
     <div class="col-6 col-md-6">
-      <div class="card shadow-sm h-100">
+      <div class="card shadow-sm h-100 text-white bg-dark ">
         <div class="card-body">
           <p class="card-subtitle text-muted mb-1">Estimated losses</p>
           <h3 class="card-title mb-0">$${lossStr}</h3>

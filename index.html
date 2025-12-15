@@ -12,7 +12,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
         rel="stylesheet">
 
 </head>
@@ -65,7 +66,7 @@
             people just like you.</p>
         <p class="col-10 mx-auto">To make the data more meaningful, we frame it from <strong>your perspective:</strong>
         </p>
-        <p class="col-10 mx-auto mb-5">
+        <p class="col-10 mx-auto mb-5 picker-row text-center">
             Here is how fraud affects
             <select id="genderSelect" class="form-select d-inline-block w-auto mx-1"></select>
             aged
@@ -78,7 +79,7 @@
 
 
     <div class="container-fluid">
-        <div id="summary" class="col-10 mx-auto mt-4">
+        <div id="summary" class="col-10 col-lg-6 mx-auto mt-4">
 
             <!-- Date range controls -->
             <div class="row g-2 align-items-center mb-3">
@@ -103,37 +104,77 @@
         </div>
 
 
-        <div id="pie-row">
-            <div>
-                <div class="panel-title">
-                    <span>Thematic Categories</span>
-                </div>
-                <svg id="pie-category" width="220" height="220"></svg>
-            </div>
+        <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
+            <h2>How are they reaching you?</h2>
+            <p>Fraudsters adapt to your communication habits: phone, text, email, social apps, or online platforms.</p>
+            <svg id="pie-method" width="350" height="350"></svg>
+        </div>
 
-            <div>
-                <div class="panel-title">
-                    <span>Solicitation Method</span>
+        <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
+            <h2>What types of fraud are people experiencing?</h2>
+            <p>The schemes most commonly targeting residents in your selected demographic and region.</p>
+            <svg id="pie-category" width="350" height="350"></svg>
+        </div>
+
+        <div class="col-8 col-lg-4 mx-auto mt-5 mb-5 text-center">
+            <h5><i>“It begins with a message that looks like it’s from your bank. Or a phone call that sounds urgent. In
+                    a split second, you’re asked to verify a transaction, confirm a package, or help a family member in
+                    crisis. These moments—confusing, stressful, and often unexpected—are how fraud begins for thousands
+                    of Canadians each year.”</i></h5>
+        </div>
+
+        <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
+            <h2>How is fraud evolving over time?</h2>
+            <p>Trends in reported cases and financial loss for your selected demographic and region.</p>
+
+            <div id="trend-container">
+                <div class="text-center">
+                    <h5>Fraud Cases and Financial Loss Over Time</h5>
                 </div>
-                <svg id="pie-method" width="220" height="220"></svg>
+                <svg id="trend-svg" width="700" height="300"></svg>
             </div>
         </div>
 
-        <div id="trend-container">
-            <div class="panel-title">
-                <span>Fraud Cases and Financial Loss Over Time</span>
-            </div>
-            <svg id="trend-svg" width="700" height="300"></svg>
+        <div class="col-8 col-lg-4 mx-auto mt-5 mb-5 text-center">
+            <h5><i>“Fraud is not only a financial crime—it is a social issue that affects trust, safety, and everyday
+                    life. By understanding these patterns and recognizing how they appear in our own communities, each
+                    of us becomes part of the solution.”</i></h5>
         </div>
     </div>
 
-    <div class="tooltip" id="tooltip" style="display:none"></div>
-    <div id="debug"></div>
+    <div class="chart-tooltip" id="tooltip" style="display:none"></div>
+    <!-- <div id="debug"></div> -->
 
-    <!--you can also use this space for internal scripts;
-        place these within <script> tags-->
+    <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
+        <div class="col-10 mx-auto">
+            <div class="row small">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
+                    <p class="mb-0">
+                        Design & Development: Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs<br>
+                        Dashboard created for UW Madison GEOG 575 course Fall 2025.
+                    </p>
+                </div>
 
-    <!--put your external script links here-->
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
+                    <p class="mb-0">
+                        Canadian Anti-Fraud Centre reporting data<br>
+                        Boundary data: Statistics Canada / Natural Resources Canada
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
+                    <p class="mb-0">
+                        Figures are based on reported cases only and do not capture
+                        unreported fraud incidents.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- D3 + topojson from CDN -->
     <script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
     <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>

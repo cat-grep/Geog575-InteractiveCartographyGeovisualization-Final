@@ -45,21 +45,6 @@ header h1 {
     min-height: 0;
 }
 
-.panel-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.panel-subtitle {
-    font-size: 0.6rem;
-    color: #6b7280;
-    margin-bottom: 6px;
-}
-
 #summary {
     margin-top: 1rem;
     padding: 1rem;
@@ -69,17 +54,6 @@ header h1 {
     font-size: 1.2rem;
 }
 
-#summary strong {
-    font-size: 1.5rem;
-}
-
-#pie-row {
-    margin-top: 1.5rem;
-    display: flex;
-    /* justify-content: space-between; */
-    gap: 1rem;
-}
-
 #trend-container {
     margin-top: 1.5rem;
     border: 1px solid #ddd;
@@ -87,38 +61,42 @@ header h1 {
     padding: 0.5rem;
 }
 
-#map-bivariate-container {
-    border: 1px solid #ddd;
-    padding: 0.5rem;
-}
-
-.province {
-    stroke: #000000;
-    stroke-width: 0.5;
-}
-
-.province.highlighted {
-    stroke: #000000;
-    stroke-width: 2;
-}
-
 #debug {
     margin-top: 1rem;
     font-size: 0.8rem;
-    color: #555;
+    color: #fff;
 }
 
-.tooltip {
-    position: fixed;
-    pointer-events: none;
-    background: rgba(17, 24, 39, 0.95);
-    color: white;
-    padding: 6px 8px;
+.chart-tooltip {
+    position: absolute;      /* Essential for following the mouse */
+    background-color: #2f2f2f; /* Or dark grey */
+    color: #fff;
+    padding: 8px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 0.6rem;
-    z-index: 20;
-    max-width: 260px;
-    display: none;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    white-space: nowrap;
+    pointer-events: none;    /* Essential to prevent the tooltip from capturing the mouse */
+    z-index: 9999;           /* Ensure it sits on top of everything */
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.picker-row {
+  line-height: 2.5;      /* taller line */
+  padding-top: 0.5rem;   /* optional */
+  padding-bottom: 0.5rem;
+}
+
+#pie-category,
+#pie-method {
+  overflow: visible;
+}
+
+footer h6 {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+footer p {
+  font-size: 0.8rem;
 }
