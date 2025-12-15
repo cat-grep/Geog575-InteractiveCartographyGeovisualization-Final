@@ -223,49 +223,54 @@ function getFilters() {
 // MINI MAP
 // -------------------------------------------------------------------
 function initMap() {
-  const width = document.getElementById('mini-map-container').clientWidth || 300;
+  // 1. Get dimensions
+  const container = document.getElementById('mini-map-container');
+  const width = container.clientWidth || 300;
   const height = 200;
 
+  // 2. Setup SVG
   mapSvg = d3.select("#mini-map-svg")
     .attr("width", width)
     .attr("height", height)
     .attr("viewBox", `0 0 ${width} ${height}`)
     .attr("preserveAspectRatio", "xMidYMid meet");
 
+  // 3. Define Projection with fitSize
   const projection = d3.geoTransverseMercator()
-    .rotate([96, 0]) 
-    .center([0, 60]) 
-    .scale(300)
-    .translate([width / 2, height / 2]);
+    .rotate([96, 0])  // Keep the rotation to orient Canada upright
+    .fitSize([width, height], canadaGeoJson);
 
   mapPathGenerator = d3.geoPath().projection(projection);
 
-  // 1. Draw Map Paths
+  // 4. Draw Map Paths (Clear existing first if re-initializing)
+  mapSvg.selectAll("*").remove(); 
+
+  // Draw Polygons
   mapSvg.selectAll("path")
     .data(canadaGeoJson.features)
     .enter()
     .append("path")
     .attr("d", mapPathGenerator)
     .attr("stroke", "#454545")
-    .attr("stroke-width", 0.5);
+    .attr("stroke-width", 0.5)
+    .attr("fill", "#555"); // Set a default fill so it's visible immediately
 
-  // 2. Add Labels (NEW CODE)
+  // 5. Add Labels
   mapSvg.selectAll("text.region-label")
     .data(canadaGeoJson.features)
     .enter()
     .append("text")
     .attr("class", "region-label")
-    .text(d => d.properties.PREABBR) // Use the abbreviation
+    .text(d => d.properties.PREABBR) 
     .attr("transform", d => {
-        // .centroid(d) returns [x, y] for the center of the polygon
         const [x, y] = mapPathGenerator.centroid(d);
         return `translate(${x}, ${y})`;
     })
-    .attr("text-anchor", "middle")      // Center text horizontally
-    .attr("alignment-baseline", "middle") // Center text vertically
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
     .style("font-size", "0.3em")
     .style("fill", "white")
-    .style("pointer-events", "none") 
+    .style("pointer-events", "none")
     .style("text-shadow", "0px 0px 2px #000");
 }
 
@@ -734,3 +739,11 @@ function updateControls() {
   d3.select("#debug")
     .text(`Filtered records: ${filtered.length} / ${data.length} total.`);
 }
+
+window.addEventListener("resize", () => {
+    // Redraw map with new dimensions
+    if (canadaGeoJson) {
+        initMap();
+        updateMap(); // Re-apply the color highlights
+    }
+});
