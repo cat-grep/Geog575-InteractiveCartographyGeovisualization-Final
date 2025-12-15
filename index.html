@@ -10,12 +10,17 @@
 
     <link rel="stylesheet" href="css/style.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom py-3">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom py-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="index.html">Canada Fraud Watch</a>
+            <a class="navbar-brand fw-bold text-light" href="index.html">Canada Fraud Watch</a>
 
             <!-- Mobile toggle button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -34,37 +39,69 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="overview.html">The Big Picture</a>
+                        <a class="nav-link text-light" href="overview.html">The Big Picture</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="comparison.html">Side-by-Side</a>
+                        <a class="nav-link text-light" href="comparison.html">Side-by-Side</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="info.html">Learn About Fraud</a>
+                        <a class="nav-link text-light" href="info.html">Learn About Fraud</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div id="controls">
-        <div>
+    <div id="controls" class="col-12">
+        <p class="col-10 mx-auto mt-4">Fraud today is no longer a distant threat; it is something that quietly enters
+            our inboxes, phones, and
+            daily routines. Across Canada, people of all ages, income levels, and backgrounds are encountering scams
+            that are more sophisticated, more convincing, and more costly than ever before.</p>
+        <p class="col-10 mx-auto">Many of us recognize the uneasy feeling when receiving a suspicious text, an
+            unexpected call, or a
+            message that looks almost legitimate. That uncertainty is now a shared national experience.</p>
+        <p class="col-10 mx-auto">This interactive dashboard helps you see fraud not as an abstract statistic, but as a
+            risk that touches
+            people just like you.</p>
+        <p class="col-10 mx-auto">To make the data more meaningful, we frame it from <strong>your perspective:</strong>
+        </p>
+        <p class="col-10 mx-auto mb-5">
             Here is how fraud affects
-            <select id="genderSelect"></select>
+            <select id="genderSelect" class="form-select d-inline-block w-auto mx-1"></select>
             aged
-            <select id="ageSelect"></select>
+            <select id="ageSelect" class="form-select d-inline-block w-auto mx-1"></select>
             in
-            <select id="regionSelect"></select>
-            .
-        </div>
+            <select id="regionSelect" class="form-select d-inline-block w-auto mx-1"></select>
+            Province.
+        </p>
     </div>
 
+
     <div class="container-fluid">
-        <div id="summary">
+        <div id="summary" class="col-10 mx-auto mt-4">
+
+            <!-- Date range controls -->
+            <div class="row g-2 align-items-center mb-3">
+                <div class="col-auto">
+                    <label for="dateStart" class="form-label mb-0 small">From</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" id="dateStart" class="form-control form-control-sm">
+                </div>
+                <div class="col-auto">
+                    <label for="dateEnd" class="form-label mb-0 small">to</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" id="dateEnd" class="form-control form-control-sm">
+                </div>
+            </div>
+
+            <!-- Summary cards container -->
             <div id="summary-text">
                 Loading data…
             </div>
         </div>
+
 
         <div id="pie-row">
             <div>

@@ -10,13 +10,13 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1.8 / 1; /* square-ish maps */
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
+  border: 1px solid #000;
+  background-color: #454545;
 }
 
 .map-controls {
   padding: 10px;
-  background-color: #f4f4f4;
+  background-color: #454545;
   border-radius: 6px;
   border: 1px solid #ddd;
 }
@@ -37,7 +37,7 @@
   align-items: center;
   gap: 12px;
   padding: 0px 14px;
-  background: #eef0f3;
+  background: #454545;
   border-radius: 6px;
   margin-top: 12px;
 }
@@ -84,7 +84,7 @@
 .legend-inner-box {
   max-width: 100%;
   overflow-x: auto;
-  background: rgba(255, 255, 255, 0.687);
+  background: #454545;
   border: 1px solid #888;
   border-radius: 6px;
   padding: 8px 10px;
@@ -155,7 +155,7 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  background: #fafafa;
+  background: #454545;
 }
 
 .chart {
@@ -191,7 +191,7 @@
   padding: 6px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  background: #ffffff;
+  background: #2f2f2f;
   width: 90px;
 }
 

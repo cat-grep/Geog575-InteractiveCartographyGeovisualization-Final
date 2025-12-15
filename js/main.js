@@ -9,6 +9,10 @@ const DATA_FILE = "data/CanadianAnti-FraudCentreReportingData-EN-CA-only.json";
 let data = [];
 let genderSelect, ageSelect, regionSelect;
 
+let dateStartInput, dateEndInput;
+let defaultMaxDate = null;
+let defaultOneYearAgo = null;
+
 // PIE CHART --------------------------------
 const PIE_SIZE = 220;
 const PIE_RADIUS = PIE_SIZE / 2 - 10;
@@ -88,6 +92,9 @@ Promise.all([
 
   console.log("Loaded rows:", data.length);
 
+  defaultMaxDate = d3.max(data, d => d.date);
+  defaultOneYearAgo = d3.timeYear.offset(defaultMaxDate, -1);
+
   initControls();
   updateControls(); // This will now safely draw charts and the map
 
@@ -103,6 +110,28 @@ function initControls() {
   genderSelect = d3.select("#genderSelect");
   ageSelect = d3.select("#ageSelect");
   regionSelect = d3.select("#regionSelect");
+
+  //date range inputs
+  dateStartInput = d3.select("#dateStart");
+  dateEndInput   = d3.select("#dateEnd");
+
+  // map metric selector (cases | loss)
+  mapMetricSelect = d3.select("#mapMetricSelect");
+  mapMetricSelect.on("change", () => {
+    mapMetric = mapMetricSelect.node().value;
+    updateControls();
+  });
+
+  // initialize date inputs to default 12-month range
+  const fmtInput = d3.timeFormat("%Y-%m-%d");
+  if (defaultOneYearAgo && defaultMaxDate) {
+    dateStartInput.property("value", fmtInput(defaultOneYearAgo));
+    dateEndInput.property("value", fmtInput(defaultMaxDate));
+  }
+
+  // when dates change, recompute summary and charts
+  dateStartInput.on("change", updateControls);
+  dateEndInput.on("change", updateControls);
 
   // map metric selector (cases | loss)
   mapMetricSelect = d3.select("#mapMetricSelect");
@@ -176,7 +205,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
   // Bind data
   const arcs = svgGroup.selectAll("path")
     // .data(pie(aggregated), d => d.data.key);
-  .data(pie(topN), d => d.data.key);
+    .data(pie(topN), d => d.data.key);
 
   arcs.enter()
     .append("path")
@@ -189,7 +218,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
   // Labels
   const labels = svgGroup.selectAll("text")
     // .data(pie(aggregated), d => d.data.key);
-  .data(pie(topN), d => d.data.key);
+    .data(pie(topN), d => d.data.key);
 
   labels.enter()
     .append("text")
@@ -204,14 +233,14 @@ function updatePieChart(svgGroup, filteredData, accessor) {
   // Interactivity: tooltip on hover for pie slices
   const tooltip = d3.select("#tooltip");
   svgGroup.selectAll("path")
-    .on("mousemove", function(event, d) {
+    .on("mousemove", function (event, d) {
       const html = `<strong>${d.data.key}</strong>: ${d.data.value}`;
       tooltip.html(html)
         .style("left", (event.clientX + 10) + "px")
         .style("top", (event.clientY + 10) + "px")
         .style("display", "block");
     })
-    .on("mouseleave", function() {
+    .on("mouseleave", function () {
       tooltip.style("display", "none");
     });
 }
@@ -309,14 +338,14 @@ function updateTrendChart(demoFiltered) {
     .attr('y1', trendInnerHeight)
     .attr('y2', d => yCases(d.cases))
     .style('pointer-events', 'stroke')
-    .on('mousemove', function(event, d) {
+    .on('mousemove', function (event, d) {
       const html = `<strong>${d.year}</strong><br/>Cases: ${fmtInt(d.cases)}<br/>Loss: $${fmtMoney(d.loss)}`;
       tooltip.html(html)
         .style('left', (event.clientX + 10) + 'px')
         .style('top', (event.clientY + 10) + 'px')
         .style('display', 'block');
     })
-    .on('mouseleave', function() {
+    .on('mouseleave', function () {
       tooltip.style('display', 'none');
     });
 
@@ -335,7 +364,7 @@ function updateTrendChart(demoFiltered) {
     .attr('y', 0)
     .attr('width', trendInnerWidth)
     .attr('height', trendInnerHeight)
-    .on('mousemove', function(event) {
+    .on('mousemove', function (event) {
       if (!yearly || !yearly.length) return;
       const [mx] = d3.pointer(event, this);
       const xVal = x.invert(mx);
@@ -395,7 +424,7 @@ function updateTrendChart(demoFiltered) {
         .style('top', (event.clienY + 10) + 'px')
         .style('display', 'block');
     })
-    .on('mouseleave', function() {
+    .on('mouseleave', function () {
       trendG.selectAll('.trend-hover-line').remove();
       trendG.selectAll('.trend-hover-point-cases').remove();
       trendG.selectAll('.trend-hover-point-loss').remove();
@@ -415,8 +444,25 @@ function updateControls() {
   const { gender, age, region } = getFilters();
 
   // Last 12 months relative to the max date in the dataset
-  const maxDate = d3.max(data, d => d.date);
-  const oneYearAgo = d3.timeYear.offset(maxDate, -1);
+  let maxDate = defaultMaxDate;
+  let oneYearAgo = defaultOneYearAgo;
+
+  if (dateStartInput && dateEndInput) {
+    const startVal = dateStartInput.node().value;
+    const endVal   = dateEndInput.node().value;
+    const parseInput = d3.timeParse("%Y-%m-%d");
+
+    if (startVal && endVal) {
+      const startDate = parseInput(startVal);
+      const endDate   = parseInput(endVal);
+
+      // simple validation: only use if both are valid and start <= end
+      if (startDate && endDate && startDate <= endDate) {
+        oneYearAgo = startDate;
+        maxDate    = endDate;
+      }
+    }
+  }
 
   const filtered = data.filter(d => {
     // Time window
@@ -439,13 +485,36 @@ function updateControls() {
 
   const summaryLines = [];
 
-  // *** TODO: Customize Date Select, Visualize the numbers (with cards or infographics)?
-  summaryLines.push(`From ${fmtDate(oneYearAgo)} to ${fmtDate(maxDate)} (last 12 months),<br>`);
-  summaryLines.push(`a total of <strong>${fmtInt(totalCases)}</strong> cases were reported,`);
-  summaryLines.push(`with an estimated <strong>$${fmtMoney(totalLoss)}</strong> in financial losses.`);
+  const period = `${fmtDate(oneYearAgo)} – ${fmtDate(maxDate)}`;
+  const casesStr = fmtInt(totalCases);
+  const lossStr = fmtMoney(totalLoss);
 
-  d3.select("#summary-text")
-    .html(summaryLines.join(" "));
+  const summaryHtml = `
+  <div class="row g-2">
+    <!-- Cases card -->
+    <div class="col-6 col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="card-subtitle text-muted mb-1">Reported cases</p>
+          <h3 class="card-title mb-0">${casesStr}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loss card -->
+    <div class="col-6 col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="card-subtitle text-muted mb-1">Estimated losses</p>
+          <h3 class="card-title mb-0">$${lossStr}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+  d3.select("#summary-text").html(summaryHtml);
+
 
   // --- update 3 pie charts ---
   // updatePieChart(pieComplaintG, filtered, d => d.complaintType);

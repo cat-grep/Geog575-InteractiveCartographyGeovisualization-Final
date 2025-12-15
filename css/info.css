@@ -1,7 +1,7 @@
 body {
     font-family: 'Exo 2', sans-serif;
-    color: #000000;
-    background-color: #ffffff;
+    color: #ffffff;
+    background-color: #2f2f2f;
 }
 
 .intro {
@@ -21,7 +21,7 @@ body {
 }
 
 .scroll-box {
-    background-color: rgb(255, 255, 255);
+    background-color: #454545;
     color: white;
     border-radius: 20px;
 }
@@ -43,7 +43,7 @@ body {
     width: 80%;
     margin: 0 auto;
     padding: 2rem 5%;
-    background-color: #ffffff;
+    background-color: #302850;
     border-radius: 20px;
     box-shadow: 0 0 20px #766e97;
 }

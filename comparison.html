@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,27 +10,37 @@
   <link rel="stylesheet" href="./lib/bootstrap.min.css" />
 
   <!-- Your custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
   <link rel="stylesheet" href="css/comparison.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
+    rel="stylesheet">
+
 </head>
+
 <body>
   <!-- Navbar (same as your other pages) -->
-  <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom py-3">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom py-3">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="index.html">Canada Fraud Watch</a>
+      <a class="navbar-brand fw-bold text-light" href="index.html">Canada Fraud Watch</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
         <ul class="navbar-nav mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="index.html">Personal Risk</a></li>
-          <li class="nav-item"><a class="nav-link" href="overview.html">The Big Picture</a></li>
+          <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
+          <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
           <li class="nav-item">
             <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
-               href="comparison.html">Side-by-Side</a>
+              href="comparison.html">Side-by-Side</a>
           </li>
-          <li class="nav-item"><a class="nav-link" href="info.html">Learn About Fraud</a></li>
+          <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
         </ul>
       </div>
     </div>
@@ -39,73 +50,74 @@
   <div class="container my-4">
     <h2 class="mb-4">Compare Two Provinces Side‑by‑Side</h2>
   </div>
-    
-    <!-- Side-by-side layout: map and controls on left, charts on right -->
-    <div class="row">
-        <div class="col-lg-5">
-            <!-- MAP -->
-            <div class="map-container mb-3">
-                <svg id="map1"></svg>
-                <div id="legend1" class="map-legend"></div>
-            </div>
 
-            <!-- SUMMARY counters below the map -->
-            <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
-            </div>
+  <!-- Side-by-side layout: map and controls on left, charts on right -->
+  <div class="row">
+    <div class="col-lg-5">
+      <!-- MAP -->
+      <div class="map-container mb-3">
+        <svg id="map1"></svg>
+        <div id="legend1" class="map-legend"></div>
+      </div>
 
-            <!-- CONTROLS below the map -->
-            <div class="map-controls">
-                <div class="mb-2">
-                    <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
-                    <select id="provinceSelect1" class="form-select"></select>
-                </div>
+      <!-- SUMMARY counters below the map -->
+      <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
+      </div>
 
-                <div class="mb-2">
-                    <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
-                    <select id="provinceSelect2" class="form-select"></select>
-                </div>
-
-                <div class="mb-2">
-                    <label class="form-label">Metric</label>
-                    <div class="btn-group" role="group">
-                        <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="metricCases">Cases</label>
-
-                        <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
-                    </div>
-                </div>
-
-                <div class="year-controls mt-3">
-                    <label for="yearSlider">Year:</label>
-                    <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
-                    <span id="yearLabel">2025</span>
-                    <button id="allYearsBtn">All Years</button>
-                </div>
-            </div>
+      <!-- CONTROLS below the map -->
+      <div class="map-controls">
+        <div class="mb-2">
+          <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
+          <select id="provinceSelect1" class="form-select"></select>
         </div>
 
-        <!-- CHARTS on the right -->
-        <div class="col-lg-7">
-            <div id="charts-province1" class="province-chart-set mb-4">
-                <h3 id="charts-title1"></h3>
-                <div id="catChart1" class="chart"></div>
-                <div id="methodChart1" class="chart"></div>
-                <div id="ageChart1" class="chart"></div>
-                <div id="monthChart1" class="chart"></div>
-            </div>
-
-            <div id="charts-province2" class="province-chart-set">
-                <h3 id="charts-title2"></h3>
-                <div id="catChart2" class="chart"></div>
-                <div id="methodChart2" class="chart"></div>
-                <div id="ageChart2" class="chart"></div>
-                <div id="monthChart2" class="chart"></div>
-            </div>
+        <div class="mb-2">
+          <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
+          <select id="provinceSelect2" class="form-select"></select>
         </div>
+
+        <div class="mb-2">
+          <label class="form-label">Metric</label>
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off"
+              checked>
+            <label class="btn btn-outline-primary" for="metricCases">Cases</label>
+
+            <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
+            <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
+          </div>
+        </div>
+
+        <div class="year-controls mt-3">
+          <label for="yearSlider">Year:</label>
+          <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
+          <span id="yearLabel">2025</span>
+          <button id="allYearsBtn">All Years</button>
+        </div>
+      </div>
     </div>
 
-  
+    <!-- CHARTS on the right -->
+    <div class="col-lg-7">
+      <div id="charts-province1" class="province-chart-set mb-4">
+        <h3 id="charts-title1"></h3>
+        <div id="catChart1" class="chart"></div>
+        <div id="methodChart1" class="chart"></div>
+        <div id="ageChart1" class="chart"></div>
+        <div id="monthChart1" class="chart"></div>
+      </div>
+
+      <div id="charts-province2" class="province-chart-set">
+        <h3 id="charts-title2"></h3>
+        <div id="catChart2" class="chart"></div>
+        <div id="methodChart2" class="chart"></div>
+        <div id="ageChart2" class="chart"></div>
+        <div id="monthChart2" class="chart"></div>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -114,4 +126,5 @@
   <!-- Your custom JS -->
   <script src="js/comparison.js"></script>
 </body>
+
 </html>
