@@ -1,0 +1,53 @@
+body {
+    font-family: 'Exo 2', sans-serif;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+.intro {
+    font-size: larger;
+    text-align: center;
+}
+
+.infotitle {
+    font-size: x-large;
+    text-align: center;
+    font-weight: bold;
+}
+
+.infotext {
+    font-size: larger;
+    text-align: center;
+}
+
+.scroll-box {
+    background-color: rgb(255, 255, 255);
+    color: white;
+    border-radius: 20px;
+}
+
+.scroll-text {
+    margin: 0;
+    font-size: larger;
+}
+
+.row3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 4rem auto;
+    width: 100%;
+}
+
+.box {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2rem 5%;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #766e97;
+}
+
+.slideshow-box {
+    padding: 1.5rem;
+}
