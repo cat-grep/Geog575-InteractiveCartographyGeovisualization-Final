@@ -54,35 +54,30 @@
     </nav>
 
     <div id="controls" class="col-12">
-        <p class="col-10 mx-auto mt-4">Fraud today is no longer a distant threat; it is something that quietly enters
-            our inboxes, phones, and
-            daily routines. Across Canada, people of all ages, income levels, and backgrounds are encountering scams
-            that are more sophisticated, more convincing, and more costly than ever before.</p>
-        <p class="col-10 mx-auto">Many of us recognize the uneasy feeling when receiving a suspicious text, an
-            unexpected call, or a
-            message that looks almost legitimate. That uncertainty is now a shared national experience.</p>
-        <p class="col-10 mx-auto">This interactive dashboard helps you see fraud not as an abstract statistic, but as a
-            risk that touches
-            people just like you.</p>
-        <p class="col-10 mx-auto">To make the data more meaningful, we frame it from <strong>your perspective:</strong>
+        <p class="col-10 col-lg-6 mx-auto mt-4">That strange text message. The robocall you almost answered. The email
+            that looked legitimate.
+            Fraud has become a shared Canadian experience, impacting everyone from students to seniors.</p>
+        <p class="col-10 col-lg-6 mx-auto">But how close is the risk to you?
+            We built this interactive tool to turn abstract numbers into a personal reality check. See how the data
+            looks from <strong>your perspective:</strong>
         </p>
-        <p class="col-10 mx-auto mb-5 picker-row text-center">
+        <p class="col-10 col-lg-6 mx-auto mb-5 picker-row text-center">
             Here is how fraud affects
             <select id="genderSelect" class="form-select d-inline-block w-auto mx-1"></select>
             aged
             <select id="ageSelect" class="form-select d-inline-block w-auto mx-1"></select>
             in
-            <select id="regionSelect" class="form-select d-inline-block w-auto mx-1"></select>
-            Province.
+            <select id="regionSelect" class="form-select d-inline-block w-auto mx-1"></select>.
         </p>
     </div>
 
 
     <div class="container-fluid">
+
         <div id="summary" class="col-10 col-lg-6 mx-auto mt-4">
 
             <!-- Date range controls -->
-            <div class="row g-2 align-items-center mb-3">
+            <div class="row g-2 align-items-center mb-3 text-center">
                 <div class="col-auto">
                     <label for="dateStart" class="form-label mb-0 small">From</label>
                 </div>
@@ -97,11 +92,19 @@
                 </div>
             </div>
 
-            <!-- Summary cards container -->
-            <div id="summary-text">
-                Loading data…
+            <div class="row">
+                <div id="mini-map-container" class="col-10 col-lg-6 mx-auto panel mt-3">
+                    <svg id="mini-map-svg" width="100%" height="200"></svg>
+                </div>
+
+                <!-- Summary cards container -->
+                <div id="summary-text">
+                    Loading data…
+                </div>
             </div>
         </div>
+
+
 
 
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
@@ -116,12 +119,12 @@
             <svg id="pie-category" width="350" height="350"></svg>
         </div>
 
-        <div class="col-8 col-lg-4 mx-auto mt-5 mb-5 text-center">
-            <h5><i>“It begins with a message that looks like it’s from your bank. Or a phone call that sounds urgent. In
+        <blockquote class="blockquote col-8 col-lg-4 mx-auto mt-5 mb-5 text-center text-muted">
+            <p><i>“It begins with a message that looks like it’s from your bank. Or a phone call that sounds urgent. In
                     a split second, you’re asked to verify a transaction, confirm a package, or help a family member in
                     crisis. These moments—confusing, stressful, and often unexpected—are how fraud begins for thousands
-                    of Canadians each year.”</i></h5>
-        </div>
+                    of Canadians each year.”</i></p>
+        </blockquote>
 
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>How is fraud evolving over time?</h2>
@@ -135,11 +138,11 @@
             </div>
         </div>
 
-        <div class="col-8 col-lg-4 mx-auto mt-5 mb-5 text-center">
-            <h5><i>“Fraud is not only a financial crime—it is a social issue that affects trust, safety, and everyday
+        <blockquote class="blockquote col-8 col-lg-4 mx-auto mt-5 mb-5 text-center text-muted">
+            <p><i>“Fraud is not only a financial crime—it is a social issue that affects trust, safety, and everyday
                     life. By understanding these patterns and recognizing how they appear in our own communities, each
-                    of us becomes part of the solution.”</i></h5>
-        </div>
+                    of us becomes part of the solution.”</i></p>
+        </blockquote>
     </div>
 
     <div class="chart-tooltip" id="tooltip" style="display:none"></div>
@@ -183,7 +186,7 @@
     <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
 
     <script type="text/javascript" src="js/main.js"></script>
-    
+
 </body>
 
 </html>

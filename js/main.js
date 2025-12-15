@@ -2,6 +2,7 @@
 // 1) CONFIG
 // -------------------------------------------------------------------
 const DATA_FILE = "data/CanadianAnti-FraudCentreReportingData-EN-CA-only.json";
+const GEOJSON_FILE = "data/CanadaProvincesCartoBoundary_EPSG4326.geojson";
 
 // -------------------------------------------------------------------
 // 2) GLOBALS
@@ -9,9 +10,31 @@ const DATA_FILE = "data/CanadianAnti-FraudCentreReportingData-EN-CA-only.json";
 let data = [];
 let genderSelect, ageSelect, regionSelect;
 
+// Canadian provinces + territories
+const VALID_REGIONS = new Set([
+  "Alberta",
+  "British Columbia",
+  "Manitoba",
+  "New Brunswick",
+  "Newfoundland And Labrador",
+  "North West Territories",
+  "Nova Scotia",
+  "Nunavut",
+  "Ontario",
+  "Prince Edward Island",
+  "Quebec",
+  "Saskatchewan",
+  "Yukon",
+]);
+
 let dateStartInput, dateEndInput;
 let defaultMaxDate = null;
 let defaultOneYearAgo = null;
+
+// MINI MAP ---------------------------------
+let canadaGeoJson = null;
+let mapPathGenerator;
+let mapSvg;
 
 // PIE CHART --------------------------------
 const PIE_SIZE = 350;
@@ -24,9 +47,9 @@ const pie = d3.pie().value(d => d.value);
 const arc = d3.arc().innerRadius(0).outerRadius(PIE_RADIUS);
 
 // Select the SVG groups
-const pieComplaintG = d3.select("#pie-complaint")
-  .append("g")
-  .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
+// const pieComplaintG = d3.select("#pie-complaint")
+//   .append("g")
+//   .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
 
 const pieCategoryG = d3.select("#pie-category")
   .append("g")
@@ -78,8 +101,12 @@ const lossPath = trendG.append("path")
 // 3) Load ALL Data Promises
 // -------------------------------------------------------------------
 Promise.all([
-  d3.json(DATA_FILE)
-]).then(([raw]) => {
+  d3.json(DATA_FILE),
+  d3.json(GEOJSON_FILE)
+]).then(([raw, geoData]) => {
+
+  // Store GeoJSON globally
+  canadaGeoJson = geoData;
 
   if (!Array.isArray(raw)) throw new Error("JSON root is not an array");
 
@@ -101,7 +128,8 @@ Promise.all([
   defaultOneYearAgo = d3.timeYear.offset(defaultMaxDate, -1);
 
   initControls();
-  updateControls(); // This will now safely draw charts and the map
+  initMap();
+  updateControls();
 
 }).catch(err => {
   console.error("Error loading data:", err);
@@ -147,7 +175,14 @@ function initControls() {
 
   const genders = Array.from(new Set(data.map(d => d.gender))).filter(Boolean).sort();
   const ages = Array.from(new Set(data.map(d => d.ageRange))).filter(Boolean).sort();
-  const regions = Array.from(new Set(data.map(d => d.region))).filter(Boolean).sort();
+  // const regions = Array.from(new Set(data.map(d => d.region))).filter(Boolean).sort();
+  const regions = Array.from(
+    new Set(
+      data
+        .map(d => (d.region || "").trim())
+        .filter(r => r && VALID_REGIONS.has(r))   // keep only valid Canadian regions
+    )
+  ).sort();
 
   function fillSelect(sel, values) {
     sel.selectAll("*").remove();
@@ -185,6 +220,86 @@ function getFilters() {
 }
 
 // -------------------------------------------------------------------
+// MINI MAP
+// -------------------------------------------------------------------
+function initMap() {
+  const width = document.getElementById('mini-map-container').clientWidth || 300;
+  const height = 200;
+
+  mapSvg = d3.select("#mini-map-svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  const projection = d3.geoTransverseMercator()
+    .rotate([96, 0]) 
+    .center([0, 60]) 
+    .scale(300)
+    .translate([width / 2, height / 2]);
+
+  mapPathGenerator = d3.geoPath().projection(projection);
+
+  // 1. Draw Map Paths
+  mapSvg.selectAll("path")
+    .data(canadaGeoJson.features)
+    .enter()
+    .append("path")
+    .attr("d", mapPathGenerator)
+    .attr("stroke", "#454545")
+    .attr("stroke-width", 0.5);
+
+  // 2. Add Labels (NEW CODE)
+  mapSvg.selectAll("text.region-label")
+    .data(canadaGeoJson.features)
+    .enter()
+    .append("text")
+    .attr("class", "region-label")
+    .text(d => d.properties.PREABBR) // Use the abbreviation
+    .attr("transform", d => {
+        // .centroid(d) returns [x, y] for the center of the polygon
+        const [x, y] = mapPathGenerator.centroid(d);
+        return `translate(${x}, ${y})`;
+    })
+    .attr("text-anchor", "middle")      // Center text horizontally
+    .attr("alignment-baseline", "middle") // Center text vertically
+    .style("font-size", "0.3em")
+    .style("fill", "white")
+    .style("pointer-events", "none") 
+    .style("text-shadow", "0px 0px 2px #000");
+}
+
+function updateMap() {
+  if (!canadaGeoJson) return;
+
+  const filters = getFilters(); 
+  const selectedRegion = filters.region; 
+
+  const highlightColor = "#1b9e77";
+  const baseColor = "#555"; 
+
+  mapSvg.selectAll("path")
+    .transition().duration(200)
+    .attr("fill", d => {
+      let featureName = d.properties.PRENAME;
+
+      if (featureName.toLowerCase() === "newfoundland and labrador") {
+        featureName = "Newfoundland And Labrador";
+      }
+
+      if (featureName === "Northwest Territories") {
+        featureName = "North West Territories";
+      }
+
+      if (selectedRegion === "all") {
+        return highlightColor; 
+      } else {
+        return featureName === selectedRegion ? highlightColor : baseColor;
+      }
+    });
+}
+
+// -------------------------------------------------------------------
 // Update a pie chart given filtered data and an accessor function
 // -------------------------------------------------------------------
 function updatePieChart(svgGroup, filteredData, accessor) {
@@ -199,9 +314,9 @@ function updatePieChart(svgGroup, filteredData, accessor) {
     ([key, value]) => ({ key: key || "Unknown", value })
   ).sort((a, b) => d3.descending(a.value, b.value));
 
-  const topN = aggregated.slice(0, 6);
-  if (aggregated.length > 6) {
-    const other = d3.sum(aggregated.slice(6), d => d.value);
+  const topN = aggregated.slice(0, 7);
+  if (aggregated.length > 7) {
+    const other = d3.sum(aggregated.slice(7), d => d.value);
     topN.push({ key: "Others", value: other });
   }
 
@@ -428,8 +543,6 @@ function updateTrendChart(demoFiltered) {
 
 
   // --- 4. Tooltip & Interactions ---
-  // Note: I removed the 'leads' section entirely. The overlay below handles everything.
-
   const overlay = trendG.selectAll('.trend-overlay').data([null]);
 
   overlay.enter()
@@ -598,7 +711,6 @@ function updateControls() {
 
   d3.select("#summary-text").html(summaryHtml);
 
-
   // --- update 3 pie charts ---
   // updatePieChart(pieComplaintG, filtered, d => d.complaintType);
   updatePieChart(pieCategoryG, filtered, d => d.category);
@@ -616,6 +728,8 @@ function updateControls() {
   });
   updateTrendChart(demoFiltered);
   // --- end trend chart ---
+
+  updateMap();
 
   d3.select("#debug")
     .text(`Filtered records: ${filtered.length} / ${data.length} total.`);
