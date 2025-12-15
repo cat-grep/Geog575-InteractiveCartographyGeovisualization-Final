@@ -42,8 +42,10 @@ const TREND_HEIGHT = 300;
 
 // Global SVG and axis groups for the line chart
 const svgTrend = d3.select("#trend-svg")
-  .attr("width", TREND_WIDTH)
-  .attr("height", TREND_HEIGHT);
+  .attr("viewBox", `0 0 ${TREND_WIDTH} ${TREND_HEIGHT}`)
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .style("width", "100%")
+  .style("height", "auto");
 
 const trendMargin = { top: 20, right: 60, bottom: 30, left: 60 };
 const trendInnerWidth = TREND_WIDTH - trendMargin.left - trendMargin.right;
