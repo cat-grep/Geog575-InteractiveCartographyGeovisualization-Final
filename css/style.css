@@ -36,7 +36,7 @@ header h1 {
 }
 
 .panel {
-    /* background: #454545; */
+    background: #454545;
     border-radius: 10px;
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); */
     padding: 10px 12px 8px 12px;

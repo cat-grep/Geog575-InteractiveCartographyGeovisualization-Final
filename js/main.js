@@ -70,7 +70,7 @@ const svgTrend = d3.select("#trend-svg")
   .style("width", "100%")
   .style("height", "auto");
 
-const trendMargin = { top: 20, right: 60, bottom: 30, left: 60 };
+const trendMargin = { top: 30, right: 80, bottom: 30, left: 60 };
 const trendInnerWidth = TREND_WIDTH - trendMargin.left - trendMargin.right;
 const trendInnerHeight = TREND_HEIGHT - trendMargin.top - trendMargin.bottom;
 
