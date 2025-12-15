@@ -3,6 +3,7 @@
 /* Ensure the SVG maps take up full width of the container */
 .map-container {
   position: relative;
+  margin-bottom: 16px;
 }
 
 .map-container svg {
@@ -11,6 +12,21 @@
   aspect-ratio: 1.8 / 1; /* square-ish maps */
   border: 1px solid #ccc;
   background-color: #f9f9f9;
+}
+
+.map-controls {
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+#summary1 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 15px;
 }
 
 
@@ -27,7 +43,7 @@
 }
 
 #yearSlider {
-  width: 220px;
+  width: 200px;
 }
 
 #yearLabel {
@@ -38,12 +54,13 @@
 }
 
 #allYearsBtn {
-  padding: 6px 14px;
+  padding: 3px 26px;
   border-radius: 6px;
   border: 1px solid #000;
   background: #fff;
   color: #000;
   cursor: pointer;
+  font-size: 13pt;
   font-weight: 600;
 }
 
@@ -58,43 +75,56 @@
 .map-legend {
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   z-index: 5;
   pointer-events: none; /* avoids blocking hover on the map */
 }
 
 /* Framed legend box */
 .legend-inner-box {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #66666675;
-  border-radius: 4px;
-  padding: 6px 8px;
-  font-size: 0.8rem;
-  pointer-events: auto; /* allow hover interaction if needed */
+  max-width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.687);
+  border: 1px solid #888;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .legend-title {
   font-weight: bold;
-  margin-bottom: 4px;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  text-align: center;
 }
 
 .legend-row {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  gap: 6px 10px;
 }
+
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
+
+
 
 .legend-color-box {
   width: 14px;
   height: 14px;
-  border: 1px solid #66666675;
+  border: 1px solid #555;
+  border-radius: 2px;
 }
+
 
 .summary {
   margin-top: 8px;
@@ -130,10 +160,15 @@
 
 .chart {
   display: inline-block;
-  width: 240px;
+  width: 180px;
   vertical-align: top;
-  margin: 10px;
+  margin: 5px;
   text-align: center;
+}
+
+.chart svg {
+  width: 87% !important;
+  height: auto !important;
 }
 
 .chart-title {

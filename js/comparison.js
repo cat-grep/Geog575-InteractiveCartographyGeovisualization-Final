@@ -172,12 +172,10 @@ function drawMaps() {
     .interpolator(d3.interpolateBlues);
 
   // Draw both maps
-  drawMap("#map1", "#legend1", prov1, metric, valueByProv, color);
-  drawMap("#map2", "#legend2", prov2, metric, valueByProv, color);
+  drawMap("#map1", "#legend1", [prov1, prov2], metric, valueByProv, color);
 
   // Update summaries
-  updateSummary("#mapTitle1", "#summary1", prov1, metric, valueByProv[prov1]);
-  updateSummary("#mapTitle2", "#summary2", prov2, metric, valueByProv[prov2]);
+  updateSummary("#summary1", prov1, metric, valueByProv[prov1], prov2, valueByProv[prov2]);
 
   // Draw charts for selected provinces
   drawProvinceCharts();
@@ -185,7 +183,7 @@ function drawMaps() {
 }
 
 // ----------- Render a single province map ------------
-function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv, colorScale) {
+function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByProv, colorScale) {
   const svg = d3.select(svgSelector);
   const container = svg.node().parentNode;
   const width = container.clientWidth;
@@ -196,9 +194,9 @@ function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv
 
   // Map projection: centered with north up
   const projection = d3.geoConicConformal()
-    .center([-113, 42])
+    .center([-113, 45])
     .rotate([45, 35, 30]) // no tilt so north is up
-    .scale(width * 0.95)
+    .scale(width * 0.85)
     .translate([width / 2, height / 2]);
 
   const path = d3.geoPath().projection(projection);
@@ -229,7 +227,7 @@ function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv
         d.properties["NAME"] ||
         d.properties["name"] ||
         d.properties["province"];
-      return name === highlightProv ? "#333" : "rgba(0,0,0,0.2)";
+      return highlightProvs.includes(name) ? "#131313ff" : "rgba(0,0,0,0.2)"; //Highlight and boarderline color
     })
     .attr("stroke-width", d => {
       const name =
@@ -237,14 +235,14 @@ function drawMap(svgSelector, legendSelector, highlightProv, metric, valueByProv
         d.properties["NAME"] ||
         d.properties["name"] ||
         d.properties["province"];
-      return name === highlightProv ? 2 : 0.5;
+      highlightProvs.includes(name) ? 2 : 0.5;
     })
     .on("mouseover", (event, d) => {
       const name = d.properties["PRENAME"] || d.properties["NAME"] || d.properties["province"];
       const val = valueByProv[name] || 0;
 
       tooltip.style("visibility", "visible")
-        .html(`<strong>${name}</strong><br>${metric === "cases" ? "Cases" : "Loss"}: ${
+        .html(`<strong>${name}</strong><br>${metric === "cases" ? "Total Cases this Year" : "Total Amount Lost this Year"}: ${
           metric === "cases" ? val : "$" + val.toLocaleString()
         }`)
         .style("left", (event.offsetX + 12) + "px")
@@ -266,9 +264,16 @@ function buildLegend(selector, metric, colorScale) {
   legend.selectAll("*").remove();
 
   const steps = 6;
-  const legendVals = d3.range(steps).map(i =>
-    i / (steps - 1) * colorScale.domain()[1]
-  );
+  const domainMin = colorScale.domain()[0];
+  const domainMax = colorScale.domain()[1];
+  const stepSize = (domainMax - domainMin) / steps;
+
+  // Create ranges for each color step
+  const legendRanges = d3.range(steps).map(i => {
+    const from = domainMin + i * stepSize;
+    const to = i === steps - 1 ? domainMax : from + stepSize;
+    return { from, to, color: colorScale(to) };
+  });
 
   // Wrap content in a styled box
   const box = legend.append("div")
@@ -276,30 +281,38 @@ function buildLegend(selector, metric, colorScale) {
 
   box.append("div")
     .attr("class", "legend-title")
-    .text(metric === "cases" ? "Number of Cases" : "Loss ($)");
+    .text(metric === "cases" ? "Number of Cases" : "Total Loss ($)");
 
   const row = box.append("div").attr("class", "legend-row");
 
   row.selectAll(".legend-item")
-    .data(legendVals)
+    .data(legendRanges)
     .enter()
     .append("div")
     .attr("class", "legend-item")
     .html(d => {
-      const colorBox = `<span class="legend-color-box" style="background:${colorScale(d)}"></span>`;
-      const label = metric === "cases" ? Math.round(d) : "$" + Math.round(d).toLocaleString();
-      return colorBox + label;
+      const colorBox = `<span class="legend-color-box" style="background:${d.color}"></span>`;
+      const label = metric === "cases"
+        ? `${Math.round(d.from)}–${Math.round(d.to)}`
+        : `$${Math.round(d.from).toLocaleString()}–$${Math.round(d.to).toLocaleString()}`;
+      return `${colorBox} ${label}`;
     });
 }
 
 
+
 // ----------- Update the summary stats below each map ------------
-function updateSummary(titleSelector, summarySelector, prov, metric, value) {
-  d3.select(titleSelector).text(prov);
-  const label = metric === "cases" ? "Total Cases" : "Total Loss";
-  const formatted = metric === "cases" ? value : "$" + value.toLocaleString();
-  d3.select(summarySelector).html(`${label}: <strong>${formatted}</strong>`);
+function updateSummary(summarySelector, prov1, metric, val1, prov2, val2) {
+  const label = metric === "cases" ? "Cases" : "Loss";
+  const format = v => metric === "cases" ? v : "$" + v.toLocaleString();
+
+  const html = `
+    <div>${prov1}: <strong>${format(val1)}</strong></div>
+    <div>${prov2}: <strong>${format(val2)}</strong></div>
+  `;
+  d3.select(summarySelector).html(html);
 }
+
 
 // ---------------- Generate charts for each province ----------------
 function drawProvinceCharts() {
@@ -376,7 +389,7 @@ function buildPieChart(containerSelector, data, title) {
 
   if (!data || data.length === 0) return;
 
-  const width = 180, height = 180;
+  const width = 160, height = 160;
   const radius = Math.min(width, height) / 2 - 4;
 
   const svg = d3.select(containerSelector)

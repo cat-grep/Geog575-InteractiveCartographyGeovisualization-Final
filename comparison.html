@@ -38,95 +38,79 @@
   <!-- Main content -->
   <div class="container my-4">
     <h2 class="mb-4">Compare Two Provinces Side‑by‑Side</h2>
-
-    <!-- Controls -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
-        <select id="provinceSelect1" class="form-select"></select>
-      </div>
-
-      <div class="col-md-4">
-        <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
-        <select id="provinceSelect2" class="form-select"></select>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Metric</label>
-        <div class="btn-group" role="group" aria-label="Metric toggle">
-          <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="metricCases">Cases</label>
-
-          <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
-          <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
-        </div>
-        
-        <div class="year-controls">
-          <label for="yearSlider">Year:</label>
-
-          <input
-            type="range"
-            id="yearSlider"
-            min="2021"
-            max="2025"
-            step="1"
-            value="2025"
-          />
-
-          <span id="yearLabel">2025</span>
-
-          <button id="allYearsBtn">All Years</button>
-          </div>
-        </div>
-      </div>
   </div>
     
-    <!-- Maps side-by-side -->
+    <!-- Side-by-side layout: map and controls on left, charts on right -->
     <div class="row">
-      <div class="col-md-6 mb-4">
-        <div class="map-container">
-          <h5 id="mapTitle1">—</h5>
-          <svg id="map1"></svg>
-          <div id="legend1" class="legend"></div>
-          <div id="summary1" class="summary"></div>
-        </div>
-      </div>
+        <div class="col-lg-5">
+            <!-- MAP -->
+            <div class="map-container mb-3">
+                <svg id="map1"></svg>
+                <div id="legend1" class="map-legend"></div>
+            </div>
 
-      <div class="col-md-6 mb-4">
-        <div class="map-container">
-          <h5 id="mapTitle2">—</h5>
-          <svg id="map2"></svg>
-          <div id="legend2" class="legend"></div>
-          <div id="summary2" class="summary"></div>
+            <!-- SUMMARY counters below the map -->
+            <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
+            </div>
+
+            <!-- CONTROLS below the map -->
+            <div class="map-controls">
+                <div class="mb-2">
+                    <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
+                    <select id="provinceSelect1" class="form-select"></select>
+                </div>
+
+                <div class="mb-2">
+                    <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
+                    <select id="provinceSelect2" class="form-select"></select>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Metric</label>
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="metricCases">Cases</label>
+
+                        <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
+                    </div>
+                </div>
+
+                <div class="year-controls mt-3">
+                    <label for="yearSlider">Year:</label>
+                    <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
+                    <span id="yearLabel">2025</span>
+                    <button id="allYearsBtn">All Years</button>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- CHARTS on the right -->
+        <div class="col-lg-7">
+            <div id="charts-province1" class="province-chart-set mb-4">
+                <h3 id="charts-title1"></h3>
+                <div id="catChart1" class="chart"></div>
+                <div id="methodChart1" class="chart"></div>
+                <div id="ageChart1" class="chart"></div>
+                <div id="monthChart1" class="chart"></div>
+            </div>
+
+            <div id="charts-province2" class="province-chart-set">
+                <h3 id="charts-title2"></h3>
+                <div id="catChart2" class="chart"></div>
+                <div id="methodChart2" class="chart"></div>
+                <div id="ageChart2" class="chart"></div>
+                <div id="monthChart2" class="chart"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="charts-container">
-        <div id="charts-province1" class="province-chart-set">
-            <h3 id="charts-title1"></h3>
-            <div id="catChart1" class="chart"></div>
-            <div id="methodChart1" class="chart"></div>
-            <div id="ageChart1" class="chart"></div>
-            <div id="monthChart1" class="chart"></div>
-        </div>
-
-        <div id="charts-province2" class="province-chart-set">
-            <h3 id="charts-title2"></h3>
-            <div id="catChart2" class="chart"></div>
-            <div id="methodChart2" class="chart"></div>
-            <div id="ageChart2" class="chart"></div>
-            <div id="monthChart2" class="chart"></div>
-        </div>
-    </div>
-
-  </div>
   
 
   <!-- D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <!-- Bootstrap JS (for navbar collapse) -->
-  <script src="./lib/bootstrap.bundle.min.js"></script>
+  <script src="./lib/bootstrap.min.js"></script>
   <!-- Your custom JS -->
   <script src="js/comparison.js"></script>
 </body>
