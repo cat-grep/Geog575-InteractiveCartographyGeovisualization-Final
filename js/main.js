@@ -7,6 +7,9 @@ const GEOJSON_FILE = "data/CanadaProvincesCartoBoundary_EPSG4326.geojson";
 // -------------------------------------------------------------------
 // 2) GLOBALS
 // -------------------------------------------------------------------
+const greenColor = "#1b9e77";
+const purpleColor = "#7570b3";
+
 let data = [];
 let genderSelect, ageSelect, regionSelect;
 
@@ -37,8 +40,8 @@ let mapPathGenerator;
 let mapSvg;
 
 // PIE CHART --------------------------------
-const PIE_SIZE = 350;
-const PIE_RADIUS = PIE_SIZE / 2 - 50;
+const PIE_SIZE = 600;
+const PIE_RADIUS = PIE_SIZE / 2 - 100;
 
 // inner radius for circular barplot
 const CIRC_INNER_RADIUS = 50;
@@ -225,8 +228,8 @@ function getFilters() {
 function initMap() {
   // 1. Get dimensions
   const container = document.getElementById('mini-map-container');
-  const width = container.clientWidth || 300;
-  const height = 200;
+  const width = container.clientWidth || 400;
+  const height = 400;
 
   // 2. Setup SVG
   mapSvg = d3.select("#mini-map-svg")
@@ -268,7 +271,7 @@ function initMap() {
     })
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .style("font-size", "0.3em")
+    .style("font-size", "0.5em")
     .style("fill", "white")
     .style("pointer-events", "none")
     .style("text-shadow", "0px 0px 2px #000");
@@ -280,7 +283,6 @@ function updateMap() {
   const filters = getFilters(); 
   const selectedRegion = filters.region; 
 
-  const highlightColor = "#1b9e77";
   const baseColor = "#555"; 
 
   mapSvg.selectAll("path")
@@ -297,9 +299,9 @@ function updateMap() {
       }
 
       if (selectedRegion === "all") {
-        return highlightColor; 
+        return greenColor; 
       } else {
-        return featureName === selectedRegion ? highlightColor : baseColor;
+        return featureName === selectedRegion ? greenColor : baseColor;
       }
     });
 }
@@ -319,9 +321,9 @@ function updatePieChart(svgGroup, filteredData, accessor) {
     ([key, value]) => ({ key: key || "Unknown", value })
   ).sort((a, b) => d3.descending(a.value, b.value));
 
-  const topN = aggregated.slice(0, 7);
-  if (aggregated.length > 7) {
-    const other = d3.sum(aggregated.slice(7), d => d.value);
+  const topN = aggregated.slice(0, 20);
+  if (aggregated.length > 20) {
+    const other = d3.sum(aggregated.slice(20), d => d.value);
     topN.push({ key: "Others", value: other });
   }
 
@@ -423,7 +425,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
     .append("text")
     .merge(labels)
     .text(d => d.key)
-    .style("font-size", "10px")
+    .style("font-size", "0.8em")
     .style("fill", "#ffffff")              // white labels
     .attr("alignment-baseline", "middle")
     .attr("transform", d => {
@@ -453,8 +455,6 @@ function updateTrendChart(demoFiltered) {
   }
 
   // --- 1. Colors Configuration ---
-  const colorCases = "#1b9e77";
-  const colorLoss = "#7570b3";
 
   // Aggregate by year
   const yearly = Array.from(
@@ -497,14 +497,14 @@ function updateTrendChart(demoFiltered) {
   casesPath
     .datum(yearly)
     .attr("d", casesLine)
-    .attr("stroke", colorCases)
+    .attr("stroke", greenColor)
     .attr("fill", "none")
     .attr("stroke-width", 2);
 
   lossPath
     .datum(yearly)
     .attr("d", lossLine)
-    .attr("stroke", colorLoss)
+    .attr("stroke", purpleColor)
     .attr("fill", "none")
     .attr("stroke-width", 2);
 
@@ -517,17 +517,17 @@ function updateTrendChart(demoFiltered) {
 
   // Left Axis (Cases - Green)
   yAxisLeftG.call(yAxisLeft)
-    .call(g => g.selectAll("text").attr("fill", colorCases)) // Color the text
-    .call(g => g.selectAll("line").attr("stroke", colorCases)) // Color the ticks
-    .call(g => g.select(".domain").attr("stroke", colorCases)); // Color the main axis line
+    .call(g => g.selectAll("text").attr("fill", greenColor)) // Color the text
+    .call(g => g.selectAll("line").attr("stroke", greenColor)) // Color the ticks
+    .call(g => g.select(".domain").attr("stroke", greenColor)); // Color the main axis line
 
   // Right Axis (Loss - Purple)
   yAxisRightG
     .attr("transform", `translate(${trendInnerWidth},0)`)
     .call(yAxisRight)
-    .call(g => g.selectAll("text").attr("fill", colorLoss))
-    .call(g => g.selectAll("line").attr("stroke", colorLoss))
-    .call(g => g.select(".domain").attr("stroke", colorLoss));
+    .call(g => g.selectAll("text").attr("fill", purpleColor))
+    .call(g => g.selectAll("line").attr("stroke", purpleColor))
+    .call(g => g.select(".domain").attr("stroke", purpleColor));
 
 
   // --- 3. Adding a Legend ---
@@ -539,12 +539,12 @@ function updateTrendChart(demoFiltered) {
     .attr("transform", "translate(-50, -15)"); // Position top-left (adjust as needed)
 
   // Legend Item 1: Cases
-  legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).style("fill", colorCases);
-  legend.append("text").attr("x", 10).attr("y", 4).text("Total Cases").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", colorCases);
+  legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).style("fill", greenColor);
+  legend.append("text").attr("x", 10).attr("y", 4).text("Total Cases").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", greenColor);
 
   // Legend Item 2: Loss
-  legend.append("circle").attr("cx", 100).attr("cy", 0).attr("r", 5).style("fill", colorLoss);
-  legend.append("text").attr("x", 110).attr("y", 4).text("Dollar Loss").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", colorLoss);
+  legend.append("circle").attr("cx", 100).attr("cy", 0).attr("r", 5).style("fill", purpleColor);
+  legend.append("text").attr("x", 110).attr("y", 4).text("Dollar Loss").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", purpleColor);
 
 
   // --- 4. Tooltip & Interactions ---
@@ -597,7 +597,7 @@ function updateTrendChart(demoFiltered) {
         .merge(hoverPointCases)
         .attr('cx', xPos)
         .attr('cy', d => yCases(d.cases))
-        .attr('fill', colorCases) // Using variable
+        .attr('fill', greenColor) // Using variable
         .attr('stroke', '#fff')
         .attr('stroke-width', 1)
         .style('pointer-events', 'none');
@@ -608,7 +608,7 @@ function updateTrendChart(demoFiltered) {
         .merge(hoverPointLoss)
         .attr('cx', xPos)
         .attr('cy', d => yLoss(d.loss))
-        .attr('fill', colorLoss) // Using variable
+        .attr('fill', purpleColor) // Using variable
         .attr('stroke', '#fff')
         .attr('stroke-width', 1)
         .style('pointer-events', 'none');
@@ -617,8 +617,8 @@ function updateTrendChart(demoFiltered) {
       const fmtInt2 = d3.format(',d');
       const fmtMoney2 = d3.format(',.2f');
       const html = `<strong>${nearest.year}</strong><br/>
-                    <span style="color:${colorCases}">Cases: ${fmtInt2(nearest.cases)}</span><br/>
-                    <span style="color:${colorLoss}">Loss: $${fmtMoney2(nearest.loss)}</span>`;
+                    <span style="color:${greenColor}">Cases: ${fmtInt2(nearest.cases)}</span><br/>
+                    <span style="color:${purpleColor}">Loss: $${fmtMoney2(nearest.loss)}</span>`;
 
       d3.select('#tooltip')
         .html(html)
@@ -697,7 +697,7 @@ function updateControls() {
       <div class="card shadow-sm h-100 text-white bg-dark ">
         <div class="card-body">
           <p class="card-subtitle text-muted mb-1">Reported cases</p>
-          <h3 class="card-title mb-0">${casesStr}</h3>
+          <h3 class="card-title mb-0" style="color:${greenColor}">${casesStr}</h3>
         </div>
       </div>
     </div>
@@ -707,7 +707,7 @@ function updateControls() {
       <div class="card shadow-sm h-100 text-white bg-dark ">
         <div class="card-body">
           <p class="card-subtitle text-muted mb-1">Estimated losses</p>
-          <h3 class="card-title mb-0">$${lossStr}</h3>
+          <h3 class="card-title mb-0" style="color:${purpleColor}">$${lossStr}</h3>
         </div>
       </div>
     </div>
