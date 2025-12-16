@@ -1,5 +1,17 @@
 /* comparison.css */
 
+/* Page gutter margins */
+.row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.row > [class*="col-"] {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+
 /* Ensure the SVG maps take up full width of the container */
 .map-container {
   position: relative;
@@ -80,6 +92,12 @@
 
 
 /* -------- Legend inside the map frame -------- */
+.legend-year-label {
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: #fff;
+}
+
 .map-legend {
   position: absolute;
   top: 8px;
@@ -176,11 +194,13 @@
 
 
 /* ----------- RIGHT COLUMN LAYOUT ----------- */
+/* Border + padding for each province chart block */
 .province-chart-set {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* LEFT-JUSTIFIED */
-  gap: 10px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  padding: 12px;
+  background-color: #2f2f2f;
+  margin-bottom: 16px;
 }
 
 /* Grid that adapts to screen width */
@@ -188,6 +208,7 @@
 .province-chart-set > #monthChart1,
 .province-chart-set > #monthChart2 {
   width: 100%;
+  max-width: 100%; /* prevent overflow */
 }
 
 /* Responsive chart grid */
@@ -200,28 +221,40 @@
 
   .province-chart-set h3 {
     grid-column: 1 / -1;
+    font-weight: 700;
   }
 }
 
 
 /* ----------- CHART CONTAINER ----------- */
 .chart {
+  position: relative; /* make tooltip positioning relative to this */
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* LEFT-JUSTIFIED ✔️ */
+  align-items: flex-start;
   text-align: left;
   padding: 10px;
+  margin-bottom: -8px; /* ⬅️ reduce from default spacing */
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #fff;
 }
 
 /* SVG scales with container */
 .responsive-svg {
-  width: 110%;
+  width: 100%;
   height: auto;
+  display: block;
+  margin: 0; /* make sure no extra vertical spacing */
 }
 
 /* Pie chart slice labels */
 .pie-label {
-  font-size: 0.95rem;     /* ≈ 15px */
+  font-size: 0.75rem;     /* ≈ 15px */
   font-weight: 500;
   letter-spacing: 0.3px;
   fill: #ffffff;
@@ -236,7 +269,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: flex-start; /* LEFT ✔️ */
+  justify-content: flex-start; /* LEFT */
 }
 
 .month-box {
@@ -247,7 +280,7 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #2f2f2f;
-  width: 40px;
+  width: 90px;
 }
 
 .top-months {
@@ -269,7 +302,25 @@
 }
 
 
-/* -------- Metric toggle buttons: PURPLE instead of blue -------- */
+/* -------- Metric toggle colors: green and purple-------- */
+.metric-cases {
+  color: #28a745;
+}
+
+.metric-loss {
+  color: #6f42c1;
+}
+
+/* Highlighted text for Top Months */
+.month-value.cases {
+  color: #28a745;
+}
+
+.month-value.loss {
+  color: #9155ff;
+}
+
+
 .btn-outline-primary {
   color: #6f42c1;                 /* Bootstrap purple */
   border-color: #6f42c1;
@@ -284,7 +335,7 @@
 /* Active (checked) state */
 .btn-check:checked + .btn-outline-primary {
   color: #fff;
-  background-color: #6f42c1;
+  background-color: #28a745;
   border-color: #6f42c1;
 }
 

@@ -141,6 +141,18 @@ function drawMaps() {
   const prov2 = d3.select("#provinceSelect2").property("value");
   const metric = d3.select("input[name=metricRadio]:checked").property("value");
 
+  // Update metric toggle button styles
+  d3.selectAll(".btn-outline-primary")
+    .classed("metric-cases", false)
+    .classed("metric-loss", false);
+
+  // Apply correct class to active one
+  const activeMetric = d3.select("input[name=metricRadio]:checked").attr("id");
+  const activeLabel = d3.select(`label[for=${activeMetric}]`);
+  activeLabel.classed("metric-cases", metric === "cases");
+  activeLabel.classed("metric-loss", metric === "loss");
+
+
   // Process years available in data
   let metrics = {};
 
@@ -169,7 +181,7 @@ function drawMaps() {
   const maxVal = d3.max(Object.values(valueByProv));
   const color = d3.scaleSequential()
     .domain([0, maxVal])
-    .interpolator(d3.interpolatePurples);
+    .interpolator(metric === "cases" ? d3.interpolateGreens : d3.interpolatePurples);
 
   // Draw both maps
   drawMap("#map1", "#legend1", [prov1, prov2], metric, valueByProv, color);
@@ -194,7 +206,7 @@ function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByPro
 
   // Map projection: centered with north up
   const projection = d3.geoConicConformal()
-    .center([-113, 43])
+    .center([-115, 43])
     .rotate([45, 35, 30]) // no tilt so north is up
     .scale(width * 1)
     .translate([width / 2, height / 2]);
@@ -273,6 +285,21 @@ function buildLegend(selector, metric, colorScale) {
     .attr("class", "legend-inner-box")
     .style("display", "none");
 
+  // Create a wrapper div to hold button + year label
+  const headerRow = legendContainer.append("div")
+    .style("display", "flex")
+    .style("justify-content", "space-between")
+    .style("align-items", "center")
+    .style("gap", "8px");
+
+  // Add year label
+  const yearLabel = headerRow.append("div")
+    .attr("class", "legend-year-label")
+    .text(showAllYears ? "All Years" : selectedYear);
+
+  // Move button into this row
+  headerRow.node().appendChild(button.node());
+
   // Toggle behavior
   let isOpen = false;
 
@@ -302,8 +329,10 @@ function buildLegend(selector, metric, colorScale) {
   });
 
   legendBox.append("div")
-    .attr("class", "legend-title")
+    .attr("class", `legend-title metric-${metric}`)
     .text(metric === "cases" ? "Number of Cases" : "Total Loss ($)");
+
+
 
   const row = legendBox.append("div")
     .attr("class", "legend-row");
@@ -386,11 +415,20 @@ function drawChartsForProvince(province, index) {
 function countByField(data, field) {
   const map = d3.rollup(
     data,
-    v => v.length,
-    d => d[field] ? d[field] : "Not Available"
+    v => ({
+      count: v.length,
+      loss: d3.sum(v, d => d.dollarLoss || 0)
+    }),
+    d => d[field] || "Not Available"
   );
-  return Array.from(map, ([key, val]) => ({ key, val }));
+
+  return Array.from(map, ([key, val]) => ({
+    key,
+    val: val.count,
+    loss: val.loss
+  }));
 }
+
 
 // ----------- Group items contributing < 2.5% of the total into the "Others" catigory ------------
 function groupRare(arr) {
@@ -418,7 +456,12 @@ function buildPieChart(containerSelector, data, title) {
 
   const containerWidth = container.node().clientWidth;
   const size = Math.min(containerWidth, 240);
-  const radius = size / 2.5 - 8;
+  const radius = size / 3.5 - 8;
+  const tooltip = container.append("div")
+  .attr("class", "province-tooltip")
+  .style("position", "absolute")
+  .style("visibility", "hidden");
+
 
   // ---------- STEP 1: Measure longest label ----------
   const tempSvg = container.append("svg").attr("visibility", "hidden");
@@ -434,6 +477,11 @@ function buildPieChart(containerSelector, data, title) {
   // ---------- STEP 2: Dynamic margin ----------
   const margin = Math.max(30, longestLabelWidth * 0.6);
 
+  // Title
+  container.append("div")
+    .attr("class", "chart-title")
+    .text(title);
+
   // ---------- SVG with padded viewBox ----------
   const svg = container.append("svg")
     .attr(
@@ -442,11 +490,6 @@ function buildPieChart(containerSelector, data, title) {
     )
     .attr("preserveAspectRatio", "xMidYMid meet")
     .classed("responsive-svg", true);
-
-  // Title
-  container.append("div")
-    .attr("class", "chart-title")
-    .text(title);
 
   const g = svg.append("g");
 
@@ -476,7 +519,30 @@ function buildPieChart(containerSelector, data, title) {
     .attr("d", arc)
     .attr("fill", d => color(d.data.key))
     .attr("stroke", "#fff")
-    .attr("stroke-width", 1);
+    .attr("stroke-width", 1)
+    .on("mouseover", (event, d) => {
+      const totalCases = d3.sum(data, d => d.val);
+      const percent = ((d.data.val / totalCases) * 100).toFixed(1);
+      const formattedLoss = "$" + d.data.loss.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+      tooltip
+        .style("visibility", "visible")
+        .html(`
+          <strong>${d.data.key}</strong><br>
+          ${d.data.val} cases (${percent}%)<br>
+          Total loss: ${formattedLoss}
+        `);
+    })
+    .on("mousemove", event => {
+      const [mouseX, mouseY] = d3.pointer(event, container.node());
+
+      tooltip
+        .style("top", (mouseY + 10) + "px")
+        .style("left", (mouseX + 10) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.style("visibility", "hidden");
+    });
 
   // ---------- STEP 3: Filter tiny slices ----------
   const minAngle = 0.12;
@@ -495,7 +561,7 @@ function buildPieChart(containerSelector, data, title) {
   Object.values(labelPositions).forEach(group => {
     group.sort((a, b) => a.y - b.y);
     group.forEach((item, i) => {
-      item.dy = i * 16; // was 12 → more space for larger text
+      item.dy = i * 10; // was 12 → more space for larger text
     });
   });
 
@@ -569,8 +635,8 @@ function buildTopMonths(containerSelector, data) {
     .text(d => d.key);
 
   monthBox.append("div")
-    .attr("class", "month-value")
-    .text(d => d.val);
+  .attr("class", `month-value ${showAllYears || d3.select("#metricCases").property("checked") ? "cases" : "loss"}`)
+  .text(d => d.val);
 }
 
 

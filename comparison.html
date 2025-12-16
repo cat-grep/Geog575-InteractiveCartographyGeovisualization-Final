@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Side-by-Side Comparison – Canada Fraud Watch</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Risk</title>
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="./lib/bootstrap.min.css" />
@@ -24,26 +25,29 @@
 
 <body>
   <!-- Navbar (same as your other pages) -->
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom py-3">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-light" href="index.html">Canada Fraud Watch</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-light" href="index.html">
+            <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
+            Canada Fraud Watch
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-        <ul class="navbar-nav mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
-          <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
-          <li class="nav-item">
-            <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
-              href="comparison.html">Side-by-Side</a>
-          </li>
-          <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
-        </ul>
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
+            <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
+            <li class="nav-item">
+              <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
+                href="comparison.html">Side-by-Side</a>
+            </li>
+            <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
+          </ul>
+        </div>
       </div>
-    </div>
   </nav>
 
   <!-- Main content -->
@@ -54,7 +58,7 @@
 
   <!-- Side-by-side layout: map and controls on left, charts on right -->
   <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-5">
       <!-- MAP -->
       <div class="map-container mb-3">
         <svg id="map1"></svg>
@@ -98,25 +102,63 @@
       </div>
     </div>
 
-    <!-- CHARTS on the right -->
-    <div class="col-lg-8">
-      <div id="charts-province1" class="province-chart-set mb-4">
-        <h3 id="charts-title1"></h3>
-        <div id="catChart1" class="chart"></div>
-        <div id="methodChart1" class="chart"></div>
-        <div id="ageChart1" class="chart"></div>
-        <div id="monthChart1" class="chart"></div>
-      </div>
+    <!-- CHARTS: side-by-side province chart sections (on the right)-->
+    <div class="col-lg-7">
+      <div class="row gx-3">
+        <div class="col-md-6">
+          <div id="charts-province1" class="province-chart-set mb-4">
+            <h3 id="charts-title1"></h3>
+            <div id="catChart1" class="chart"></div>
+            <div id="methodChart1" class="chart"></div>
+            <div id="ageChart1" class="chart"></div>
+            <div id="monthChart1" class="chart"></div>
+          </div>
+        </div>
 
-      <div id="charts-province2" class="province-chart-set">
-        <h3 id="charts-title2"></h3>
-        <div id="catChart2" class="chart"></div>
-        <div id="methodChart2" class="chart"></div>
-        <div id="ageChart2" class="chart"></div>
-        <div id="monthChart2" class="chart"></div>
+        <div class="col-md-6">
+          <div id="charts-province2" class="province-chart-set">
+            <h3 id="charts-title2"></h3>
+            <div id="catChart2" class="chart"></div>
+            <div id="methodChart2" class="chart"></div>
+            <div id="ageChart2" class="chart"></div>
+            <div id="monthChart2" class="chart"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
+        <div class="col-10 mx-auto">
+            <div class="row small">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
+                    <p class="mb-0">
+                        Design & Development: Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs<br>
+                        Dashboard created for UW Madison GEOG 575 course Fall 2025.
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
+                    <p class="mb-0">
+                        <a href="https://open.canada.ca/data/en/dataset/6a09c998-cddb-4a22-beff-4dca67ab892f/resource/43c67af5-e598-4a9b-a484-fe1cb5d775b5"
+                            target="_blank">Centre reporting data</a><br />
+                        <a href="https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21"
+                            target="_blank">Statistics Canada: 2021 Census – Boundary files</a><br />
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
+                    <p class="mb-0">
+                        Figures are based on reported cases only and do not capture
+                        unreported fraud incidents.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 
 
