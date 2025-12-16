@@ -9,9 +9,17 @@
 .map-container svg {
   width: 100%;
   height: auto;
-  aspect-ratio: 1.8 / 1; /* square-ish maps */
-  border: 1px solid #000;
+  aspect-ratio: 1.6 / 1; /* square-ish maps */
+  border: 1.1px solid #000;
+  border-radius: 5px;
   background-color: #454545;
+}
+
+/* Slightly constrain the map + controls column */
+@media (min-width: 992px) {
+  .map-column {
+    max-width: 460px;
+  }
 }
 
 .map-controls {
@@ -54,7 +62,7 @@
 }
 
 #allYearsBtn {
-  padding: 3px 26px;
+  padding: 3px 16px;
   border-radius: 6px;
   border: 1px solid #000;
   background: #fff;
@@ -71,20 +79,19 @@
 
 
 
-/* Legend positioned inside the map frame */
+/* -------- Legend inside the map frame -------- */
 .map-legend {
   position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 5;
-  pointer-events: none; /* avoids blocking hover on the map */
+  z-index: 6;
 }
 
 /* Framed legend box */
 .legend-inner-box {
   max-width: 100%;
   overflow-x: auto;
-  background: #454545;
+  background: #454545ec;
   border: 1px solid #888;
   border-radius: 6px;
   padding: 8px 10px;
@@ -101,10 +108,10 @@
 }
 
 .legend-row {
-  display: grid;
-  grid-template-rows: repeat(2, auto);
-  grid-auto-flow: column;
-  gap: 6px 10px;
+  display: flex;
+  flex-direction: column;   /* ONE vertical column */
+  gap: 6px;
+  align-items: flex-start;
 }
 
 
@@ -116,8 +123,6 @@
   white-space: nowrap;
 }
 
-
-
 .legend-color-box {
   width: 14px;
   height: 14px;
@@ -125,12 +130,33 @@
   border-radius: 2px;
 }
 
+.legend-inner-box {
+  max-width: 220px;
+}
+
+/* Legend Toggle Button  */
+.legend-toggle-btn {
+  background: #6e42c130; /* purple */
+  color: #fff;
+  border: 2px solid #6f42c1;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.legend-toggle-btn:hover {
+  background: #59339d;
+}
 
 .summary {
   margin-top: 8px;
   font-size: 1rem;
   font-weight: 500;
 }
+
+
 
 /* Tooltip style */
 .province-tooltip {
@@ -149,51 +175,87 @@
 
 
 
-/* Charts */
+/* ----------- RIGHT COLUMN LAYOUT ----------- */
 .province-chart-set {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #454545;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* LEFT-JUSTIFIED */
+  gap: 10px;
 }
 
+/* Grid that adapts to screen width */
+.province-chart-set > .chart,
+.province-chart-set > #monthChart1,
+.province-chart-set > #monthChart2 {
+  width: 100%;
+}
+
+/* Responsive chart grid */
+@media (min-width: 576px) {
+  .province-chart-set {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: start;
+  }
+
+  .province-chart-set h3 {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* ----------- CHART CONTAINER ----------- */
 .chart {
-  display: inline-block;
-  width: 180px;
-  vertical-align: top;
-  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* LEFT-JUSTIFIED ✔️ */
+  text-align: left;
+  padding: 10px;
+}
+
+/* SVG scales with container */
+.responsive-svg {
+  width: 110%;
+  height: auto;
+}
+
+/* Pie chart slice labels */
+.pie-label {
+  font-size: 0.95rem;     /* ≈ 15px */
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  fill: #ffffff;
+  pointer-events: none;
+  user-select: none;
+}
+
+
+
+/* ----------- MONTH BOXES ----------- */
+.responsive-months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start; /* LEFT ✔️ */
+}
+
+.month-box {
+  flex: 1 1 80px;
+  max-width: 120px;
   text-align: center;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #2f2f2f;
+  width: 40px;
 }
 
-.chart svg {
-  width: 87% !important;
-  height: auto !important;
-}
-
-.chart-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-
-
-/* Month boxes */
 .top-months {
   display: flex;
   justify-content: space-around;
   margin-top: 10px;
 }
 
-.month-box {
-  text-align: center;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #2f2f2f;
-  width: 90px;
-}
 
 .month-name {
   font-size: 0.85rem;
@@ -203,5 +265,31 @@
 .month-value {
   font-size: 1.1rem;
   font-weight: bold;
-  color: #2a6ebb;
+  color: #874de3;
+}
+
+
+/* -------- Metric toggle buttons: PURPLE instead of blue -------- */
+.btn-outline-primary {
+  color: #6f42c1;                 /* Bootstrap purple */
+  border-color: #6f42c1;
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+}
+
+/* Active (checked) state */
+.btn-check:checked + .btn-outline-primary {
+  color: #fff;
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+}
+
+/* Focus / accessibility */
+.btn-outline-primary:focus,
+.btn-check:focus + .btn-outline-primary {
+  box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.35);
 }

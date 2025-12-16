@@ -169,7 +169,7 @@ function drawMaps() {
   const maxVal = d3.max(Object.values(valueByProv));
   const color = d3.scaleSequential()
     .domain([0, maxVal])
-    .interpolator(d3.interpolateBlues);
+    .interpolator(d3.interpolatePurples);
 
   // Draw both maps
   drawMap("#map1", "#legend1", [prov1, prov2], metric, valueByProv, color);
@@ -187,16 +187,16 @@ function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByPro
   const svg = d3.select(svgSelector);
   const container = svg.node().parentNode;
   const width = container.clientWidth;
-  const height = 150; // fixed height for each map frame ✔️
+  const height = 150; // fixed height for each map frame
 
   svg.selectAll("*").remove(); // Clear previous render
   svg.attr("width", width).attr("height", height);
 
   // Map projection: centered with north up
   const projection = d3.geoConicConformal()
-    .center([-113, 45])
+    .center([-113, 43])
     .rotate([45, 35, 30]) // no tilt so north is up
-    .scale(width * 0.85)
+    .scale(width * 1)
     .translate([width / 2, height / 2]);
 
   const path = d3.geoPath().projection(projection);
@@ -227,7 +227,7 @@ function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByPro
         d.properties["NAME"] ||
         d.properties["name"] ||
         d.properties["province"];
-      return highlightProvs.includes(name) ? "#131313ff" : "rgba(0,0,0,0.2)"; //Highlight and boarderline color
+      return highlightProvs.includes(name) ? "#ea63ffff" : "rgba(0, 0, 0, 0.1)"; //Highlight and boarderline color
     })
     .attr("stroke-width", d => {
       const name =
@@ -254,36 +254,59 @@ function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByPro
     })
     .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-  // Draw legend INSIDE the map frame ✔️
+  // Draw legend INSIDE the map frame
   buildLegend(legendSelector, metric, colorScale);
 }
 
 // ----------- Build dynamic color legend ------------
 function buildLegend(selector, metric, colorScale) {
-  const legend = d3.select(selector);
-  legend.selectAll("*").remove();
+  const legendContainer = d3.select(selector);
+  legendContainer.selectAll("*").remove();
 
+  // --- Toggle button ---
+  const button = legendContainer.append("button")
+    .attr("class", "legend-toggle-btn")
+    .text("Legend");
+
+  // --- Legend content wrapper (hidden by default) ---
+  const legendBox = legendContainer.append("div")
+    .attr("class", "legend-inner-box")
+    .style("display", "none");
+
+  // Toggle behavior
+  let isOpen = false;
+
+  button.on("click", () => {
+    isOpen = !isOpen;
+    legendBox.style("display", isOpen ? "block" : "none");
+    button.style("display", isOpen ? "none" : "block");
+  });
+
+  // Clicking legend closes it
+  legendBox.on("click", () => {
+    isOpen = false;
+    legendBox.style("display", "none");
+    button.style("display", "block");
+  });
+
+  // --- Build legend content ---
   const steps = 6;
   const domainMin = colorScale.domain()[0];
   const domainMax = colorScale.domain()[1];
   const stepSize = (domainMax - domainMin) / steps;
 
-  // Create ranges for each color step
   const legendRanges = d3.range(steps).map(i => {
     const from = domainMin + i * stepSize;
     const to = i === steps - 1 ? domainMax : from + stepSize;
     return { from, to, color: colorScale(to) };
   });
 
-  // Wrap content in a styled box
-  const box = legend.append("div")
-    .attr("class", "legend-inner-box");
-
-  box.append("div")
+  legendBox.append("div")
     .attr("class", "legend-title")
     .text(metric === "cases" ? "Number of Cases" : "Total Loss ($)");
 
-  const row = box.append("div").attr("class", "legend-row");
+  const row = legendBox.append("div")
+    .attr("class", "legend-row");
 
   row.selectAll(".legend-item")
     .data(legendRanges)
@@ -291,13 +314,17 @@ function buildLegend(selector, metric, colorScale) {
     .append("div")
     .attr("class", "legend-item")
     .html(d => {
-      const colorBox = `<span class="legend-color-box" style="background:${d.color}"></span>`;
       const label = metric === "cases"
         ? `${Math.round(d.from)}–${Math.round(d.to)}`
         : `$${Math.round(d.from).toLocaleString()}–$${Math.round(d.to).toLocaleString()}`;
-      return `${colorBox} ${label}`;
+
+      return `
+        <span class="legend-color-box" style="background:${d.color}"></span>
+        ${label}
+      `;
     });
 }
+
 
 
 
@@ -385,54 +412,139 @@ function groupRare(arr) {
 
 // ---------------- Pie Chart Generator ----------------
 function buildPieChart(containerSelector, data, title) {
-  d3.select(containerSelector).selectAll("*").remove();
-
+  const container = d3.select(containerSelector);
+  container.selectAll("*").remove();
   if (!data || data.length === 0) return;
 
-  const width = 160, height = 160;
-  const radius = Math.min(width, height) / 2 - 4;
+  const containerWidth = container.node().clientWidth;
+  const size = Math.min(containerWidth, 240);
+  const radius = size / 2.5 - 8;
 
-  const svg = d3.select(containerSelector)
-    .append("svg")
-      .attr("width", width)
-      .attr("height", height + 20)
-    .append("g")
-      .attr("transform", `translate(${width / 2}, ${height / 2})`);
+  // ---------- STEP 1: Measure longest label ----------
+  const tempSvg = container.append("svg").attr("visibility", "hidden");
+  const tempText = tempSvg.append("text").style("font-size", "10px");
+
+  const longestLabelWidth = d3.max(data, d => {
+    tempText.text(d.key);
+    return tempText.node().getComputedTextLength();
+  });
+
+  tempSvg.remove();
+
+  // ---------- STEP 2: Dynamic margin ----------
+  const margin = Math.max(30, longestLabelWidth * 0.6);
+
+  // ---------- SVG with padded viewBox ----------
+  const svg = container.append("svg")
+    .attr(
+      "viewBox",
+      `${-size / 2 - margin} ${-size / 2 - margin} ${size + margin * 2} ${size + margin * 2}`
+    )
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .classed("responsive-svg", true);
 
   // Title
-  d3.select(containerSelector)
-    .append("div")
+  container.append("div")
     .attr("class", "chart-title")
     .text(title);
 
-  const pie = d3.pie().value(d => d.val);
+  const g = svg.append("g");
+
+  const pie = d3.pie()
+    .sort(null)
+    .value(d => d.val);
+
   const arcs = pie(data);
 
   const color = d3.scaleOrdinal()
-      .domain(data.map(d => d.key))
-      .range(d3.schemeSet2);
+    .domain(data.map(d => d.key))
+    .range(d3.schemeSet2);
 
-  const arc = d3.arc().innerRadius(0).outerRadius(radius);
+  const arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius);
 
-  svg.selectAll("path")
+  const labelArc = d3.arc()
+    .innerRadius(radius * 1.3)
+    .outerRadius(radius * 1.3);
+
+  // ---------- Draw slices ----------
+  g.selectAll("path")
     .data(arcs)
     .enter()
     .append("path")
     .attr("d", arc)
     .attr("fill", d => color(d.data.key))
     .attr("stroke", "#fff")
-    .attr("stroke-width", 1.5);
+    .attr("stroke-width", 1);
 
-  // Labels (only if slice is large enough)
-  svg.selectAll("text")
-    .data(arcs)
+  // ---------- STEP 3: Filter tiny slices ----------
+  const minAngle = 0.12;
+  const visibleArcs = arcs.filter(d => d.endAngle - d.startAngle > minAngle);
+
+  // ---------- STEP 4: Detect vertical crowding ----------
+  const labelPositions = {};
+
+  visibleArcs.forEach(d => {
+    const [x, y] = labelArc.centroid(d);
+    const side = x > 0 ? "right" : "left";
+    if (!labelPositions[side]) labelPositions[side] = [];
+    labelPositions[side].push({ d, y });
+  });
+
+  Object.values(labelPositions).forEach(group => {
+    group.sort((a, b) => a.y - b.y);
+    group.forEach((item, i) => {
+      item.dy = i * 16; // was 12 → more space for larger text
+    });
+  });
+
+
+  // ---------- Leader lines ----------
+  g.selectAll("polyline")
+    .data(visibleArcs)
+    .enter()
+    .append("polyline")
+    .attr("points", d => {
+      const [x, y] = labelArc.centroid(d);
+      const side = x > 0 ? "right" : "left";
+      const dy =
+        labelPositions[side]?.find(p => p.d === d)?.dy || 0;
+
+      const posA = arc.centroid(d);
+      const posB = [x, y + dy];
+      const posC = [x + (side === "right" ? 10 : -10), y + dy];
+
+      return [posA, posB, posC];
+    })
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 1);
+
+  // ---------- Labels ----------
+  g.selectAll("text.pie-label")
+    .data(visibleArcs)
     .enter()
     .append("text")
-    .text(d => d.value > 0 ? d.data.key : "")
-    .attr("transform", d => `translate(${arc.centroid(d)})`)
-    .style("font-size", "10px")
-    .style("text-anchor", "middle");
+    .attr("class", "pie-label")
+    .attr("transform", d => {
+      const [x, y] = labelArc.centroid(d);
+      const side = x > 0 ? "right" : "left";
+      const dy =
+        labelPositions[side]?.find(p => p.d === d)?.dy || 0;
+
+      return `translate(${x + (side === "right" ? 20 : -20)}, ${y + dy})`;
+      // ⬆️ was 14 → extra room for bigger font
+    })
+    .attr("text-anchor", d =>
+      labelArc.centroid(d)[0] > 0 ? "start" : "end"
+    )
+    .style("fill", "#fff")
+    .text(d => d.data.key);
+
 }
+
+
 
 // ---------------- Top 3 Months Renderer ----------------
 function buildTopMonths(containerSelector, data) {
@@ -441,10 +553,10 @@ function buildTopMonths(containerSelector, data) {
 
   container.append("div")
     .attr("class", "chart-title")
-    .text("Top Months Reported - Number of Incidents");
+    .text("Top Months Reported");
 
   const wrapper = container.append("div")
-    .attr("class", "top-months");
+    .attr("class", "top-months responsive-months");
 
   const monthBox = wrapper.selectAll(".month-box")
     .data(data)
@@ -460,3 +572,9 @@ function buildTopMonths(containerSelector, data) {
     .attr("class", "month-value")
     .text(d => d.val);
 }
+
+
+// --- Redraw charts responsively on resize / zoom ---
+window.addEventListener("resize", () => {
+  drawProvinceCharts();
+});
