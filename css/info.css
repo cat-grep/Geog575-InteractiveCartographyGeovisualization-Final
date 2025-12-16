@@ -22,18 +22,18 @@ a:hover {
 }
 
 .intro {
-    font-size: larger;
+    font-size: x-large;
     text-align: center;
 }
 
 .infotitle {
-    font-size: x-large;
+    font-size: xx-large;
     text-align: center;
     font-weight: bold;
 }
 
 .infotext {
-    font-size: larger;
+    font-size: x-large;
     text-align: center;
 }
 
@@ -51,6 +51,7 @@ a:hover {
 
 .list-wrapper li {
     text-align: center;
+    font-size: large;
     margin-bottom: 0.75rem;
 }
 
