@@ -247,7 +247,7 @@ function initSVGs() {
 
   genderWidth = genderParent.clientWidth;
   genderHeight = genderParent.clientHeight;
-  
+
   donutWidth = donutParent.clientWidth;
   donutHeight = donutParent.clientHeight;
 
@@ -256,7 +256,7 @@ function initSVGs() {
   const possibleRadiusGender = Math.min(genderWidth, genderHeight) / 2 - margin;
   const possibleRadiusAge = Math.min(donutWidth, donutHeight) / 2 - margin;
   const commonRadius = Math.min(possibleRadiusGender, possibleRadiusAge);
-  
+
   genderRadius = commonRadius;
   donutRadius = commonRadius;
 
@@ -264,7 +264,7 @@ function initSVGs() {
   genderSvg = d3.select("#genderChart")
     .attr("width", genderWidth)
     .attr("height", genderHeight);
-    
+
   genderG = genderSvg.append("g")
     .attr("transform", `translate(${genderWidth / 2},${genderHeight / 2})`);
 
@@ -379,11 +379,32 @@ function updateMap() {
       tooltip.style("display", "none");
     });
 
+  mapSvg.selectAll("text.region-label")
+    .data(geojson.features)
+    .enter()
+    .append("text")
+    .attr("class", "region-label")
+    .text(d => d.properties.PREABBR)
+    .attr("transform", d => {
+      const [x, y] = path.centroid(d);
+      return `translate(${x}, ${y})`;
+    })
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("font-size", "1em")
+    .style("font-weight","bold")
+    .style("fill", "#fff")
+    .style("stroke", "#333")
+    .style("stroke-width", "2px")
+    .style("paint-order", "stroke")
+    .style("stroke-linejoin", "round")
+    .style("pointer-events", "none");
+
   featureSelection.exit().remove();
 
   // Legend
   d3.select("#legendLabel").text(
-    selectedMetric === "cases" ? "Cases" : "Loss($)"
+    selectedMetric === "cases" ? "Cases" : "Loss"
   );
   d3.select("#legendMin").text("0");
   d3.select("#legendMax").text(formatMetricValue(maxVal || 0, selectedMetric));
@@ -507,7 +528,7 @@ function updateBarChart() {
   const data = aggregateByProvince(selectedYear)
     .filter(d => d.value > 0)
     .sort((a, b) => d3.descending(a.value, b.value))
-    .slice(0, 8); // top 8
+    .slice(0, 10); // top 10
 
   const maxVal = d3.max(data, d => d.value) || 0;
 
@@ -678,7 +699,7 @@ function updateGenderChart() {
         .style("top", (event.pageY + 12) + "px")
         .html(
           `<strong>${d.data[0]}</strong><br>` +
-          `${selectedMetric === "cases" ? "Cases" : "Loss($)"}: ${formatMetricValue(d.data[1], selectedMetric)}<br>` +
+          `${selectedMetric === "cases" ? "Cases" : "Loss"}: ${formatMetricValue(d.data[1], selectedMetric)}<br>` +
           `Share: ${percent}`
         );
     })
@@ -858,7 +879,7 @@ function updateAgeChart() {
         .style("top", (event.pageY + 12) + "px")
         .html(
           `<strong>${d.data[0]}</strong><br>` +
-          `${selectedMetric === "cases" ? "Cases" : "Loss($)"}: ${formatMetricValue(d.data[1], selectedMetric)}<br>` +
+          `${selectedMetric === "cases" ? "Cases" : "Loss"}: ${formatMetricValue(d.data[1], selectedMetric)}<br>` +
           `Share: ${percent}`
         );
     })
@@ -924,12 +945,12 @@ window.addEventListener("resize", () => {
   const mapContainer = document.getElementById("mapContainer");
   mapWidth = mapContainer.clientWidth;
   mapHeight = mapContainer.clientHeight;
-  
+
   mapSvg.attr("width", mapWidth).attr("height", mapHeight);
-  
+
   // Re-fit projection to new size
   projection.fitSize([mapWidth, mapHeight], geojson);
-  
+
   // 2. Re-measure Trend
   const trendContainer = document.getElementById("trendChartContainer");
   // We subtract a bit for internal padding if necessary, or just use clientHeight of the flex container
@@ -950,10 +971,10 @@ window.addEventListener("resize", () => {
   // 4. Re-measure Gender & Age (Recalculate Radius)
   const genderParent = genderSvg.node().parentElement;
   const donutParent = donutSvg.node().parentElement;
-  
+
   genderWidth = genderParent.clientWidth;
   genderHeight = genderParent.clientHeight;
-  
+
   donutWidth = donutParent.clientWidth;
   donutHeight = donutParent.clientHeight;
 
@@ -962,7 +983,7 @@ window.addEventListener("resize", () => {
   const possibleRadiusGender = Math.min(genderWidth, genderHeight) / 2 - margin;
   const possibleRadiusAge = Math.min(donutWidth, donutHeight) / 2 - margin;
   const commonRadius = Math.min(possibleRadiusGender, possibleRadiusAge);
-  
+
   genderRadius = commonRadius;
   donutRadius = commonRadius;
 

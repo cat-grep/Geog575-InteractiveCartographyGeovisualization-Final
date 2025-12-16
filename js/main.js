@@ -378,7 +378,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
       const pct = total ? d.value / total : 0;
       tooltip.html(
         `<strong>${d.key}</strong><br>` +
-        `Count: ${fmtInt(d.value)}<br>` +
+        `Cases: ${fmtInt(d.value)}<br>` +
         `Share: ${fmtPct(pct)}`
       )
         .style("left", (event.pageX + 10) + "px")
@@ -415,11 +415,11 @@ function updatePieChart(svgGroup, filteredData, accessor) {
       const pct = total ? d.value / total : 0;
       tooltip.html(
         `<strong>${d.key}</strong><br>` +
-        `Count: ${fmtInt(d.value)}<br>` +
+        `Cases: ${fmtInt(d.value)}<br>` +
         `Share: ${fmtPct(pct)}`
       )
-        .style("left", (event.clientX + 10) + "px")
-        .style("top", (event.clientY + 10) + "px")
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY + 10) + "px")
         .style("display", "block");
     })
     .on("mouseleave", () => {
@@ -549,11 +549,11 @@ function updateTrendChart(demoFiltered) {
 
   // Legend Item 1: Cases
   legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).style("fill", greenColor);
-  legend.append("text").attr("x", 10).attr("y", 4).text("Total Cases").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", greenColor);
+  legend.append("text").attr("x", 10).attr("y", 4).text("Cases").style("font-size", "0.8em").attr("alignment-baseline", "middle").style("fill", greenColor);
 
   // Legend Item 2: Loss
-  legend.append("circle").attr("cx", 100).attr("cy", 0).attr("r", 5).style("fill", purpleColor);
-  legend.append("text").attr("x", 110).attr("y", 4).text("Dollar Loss").style("font-size", "12px").attr("alignment-baseline", "middle").style("fill", purpleColor);
+  legend.append("circle").attr("cx", 60).attr("cy", 0).attr("r", 5).style("fill", purpleColor);
+  legend.append("text").attr("x", 70).attr("y", 4).text("Loss($)").style("font-size", "0.8em").attr("alignment-baseline", "middle").style("fill", purpleColor);
 
 
   // --- 4. Tooltip & Interactions ---
