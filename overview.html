@@ -14,7 +14,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
         rel="stylesheet">
 
 </head>
@@ -54,44 +55,27 @@
         </div>
     </nav>
 
-    <div id="controls">
-        <div>
-            Metric:
-            <label><input type="radio" name="metric" value="cases" checked> Cases</label>
-            <label><input type="radio" name="metric" value="loss"> Loss ($)</label>
-        </div>
-        <div>
-            Gender:
-            <select id="genderSelect"></select>
-        </div>
-        <div>
-            Age range:
-            <select id="ageSelect"></select>
-        </div>
-        <div style="align-items: center;">
-            <span>Year:</span>
-            <input id="yearSlider" type="range">
-            <span id="yearLabel"></span>
-            <button id="allYearsBtn" class="active rounded" type="button">All years</button>
-        </div>
-    </div>
-
-    <div id="layout" class="container-fluid">
-        <div class="row">
-            <!-- LEFT: MAP (half width on md+ screens) -->
-            <div class="col-12 col-md-6">
-                <div class="panel h-100" id="mapPanel">
-                    <div class="panel-title d-flex justify-content-between">
-                        <span>Choropleth map</span>
-                        <span id="mapTitleMetric" style="font-size:11px;color:#6b7280;"></span>
+    <div class="container-fluid mt-3 d-flex flex-column" id="main-content">
+        <div class="row g-3 h-100">
+            <div class="col-lg-6 d-flex">
+                <div class="panel w-100 border rounded-3 shadow-sm p-3 d-flex flex-column" id="mapPanel"
+                    style="min-height: 500px;">
+                    <div class="panel-title d-flex justify-content-between align-items-center">
+                        <h2>Nationwide Fraud Overview</h2>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-success" id="btnCase">Cases</button>
+                            <button type="button" class="btn btn-sm" id="btnLoss">Loss ($)</button>
+                        </div>
                     </div>
                     <div class="panel-subtitle" id="mapSubtitle"></div>
-                    <div id="mapContainer">
-                        <svg id="map" class="w-100"></svg>
+
+                    <div id="mapContainer" class="flex-grow-1 position-relative">
+                        <svg id="map" class="w-100 h-100" style="display:block;"></svg>
+
                         <div id="mapLegend">
                             <div id="legendLabel"></div>
                             <div id="mapLegendGradient"></div>
-                            <div id="legendScale" class="d-flex justify-content-between" style="font-size:10px;">
+                            <div id="legendScale" class="d-flex justify-content-between">
                                 <span id="legendMin">0</span>
                                 <span id="legendMax">0</span>
                             </div>
@@ -99,27 +83,61 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-6">
+                <div class="d-flex flex-column gap-3 h-100">
 
-            <!-- RIGHT: TWO CHARTS STACKED (half width on md+ screens) -->
-            <div class="col-12 col-md-6">
-                <div class="panel h-100" id="chartsPanel">
-                    <div id="chartsContainer" class="d-flex flex-column gap-3">
-                        <div class="chart" id="trendChartContainer">
-                            <div class="panel-title">
-                                <span>Trend over time</span>
+                    <div class="row g-3 flex-grow-1">
+                        <div class="col-md-6">
+                            <div class="panel h-100 border rounded-3 shadow-sm p-3 d-flex flex-column"
+                                id="trendChartContainer">
+                                <div class="panel-title d-flex justify-content-between align-items-center">
+                                    <h4>Trend over time</h4>
+                                    <button id="allYearsBtn" class="selectAllBtn active rounded" type="button">All
+                                        Years</button>
+                                </div>
+                                <div class="flex-grow-1" style="min-height: 200px;">
+                                    <svg id="trendChart" class="w-100 h-100"></svg>
+                                </div>
                             </div>
-                            <div class="panel-subtitle">
-                                Click a point on the line to select that year.
-                            </div>
-                            <svg id="trendChart" class="w-100"></svg>
                         </div>
-
-                        <div class="chart" id="barChartContainer">
-                            <div class="panel-title">
-                                <span>Top regions for selected year</span>
+                        <div class="col-md-6">
+                            <div class="panel h-100 border rounded-3 shadow-sm p-3 d-flex flex-column"
+                                id="barChartContainer">
+                                <div class="panel-title">
+                                    <h4>Top regions</h4>
+                                </div>
+                                <div class="flex-grow-1" style="min-height: 200px;">
+                                    <svg id="barChart" class="w-100"></svg>
+                                </div>
                             </div>
-                            <div class="panel-subtitle" id="barSubtitle"></div>
-                            <svg id="barChart" class="w-100"></svg>
+                        </div>
+                    </div>
+                    <div class="row g-3 flex-grow-1">
+                        <div class="col-md-6">
+                            <div class="panel h-100 border rounded-3 shadow-sm p-3 d-flex flex-column"
+                                id="genderChartContainer">
+                                <div class="panel-title d-flex justify-content-between align-items-center">
+                                    <h4>Share by Gender</h4>
+                                    <button id="allGendersBtn" class="selectAllBtn active rounded" type="button">All
+                                        Genders</button>
+                                </div>
+                                <div class="flex-grow-1" style="min-height: 200px;">
+                                    <svg id="genderChart" class="w-100 h-100"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel h-100 border rounded-3 shadow-sm p-3 d-flex flex-column"
+                                id="donutContainer">
+                                <div class="panel-title d-flex justify-content-between align-items-center">
+                                    <h4>Share by Age Group</h4>
+                                    <button id="allAgesBtn" class="selectAllBtn active rounded" type="button">All
+                                        Ages</button>
+                                </div>
+                                <div class="flex-grow-1" style="min-height: 200px;">
+                                    <svg id="donutChart" class="w-100 h-100"></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -127,8 +145,37 @@
         </div>
     </div>
 
+    <div class="chart-tooltip" id="tooltip" style="display:none"></div>
 
-    <div id="tooltip" class="fraud-tooltip"></div>
+    <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
+        <div class="col-10 mx-auto">
+            <div class="row small">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
+                    <p class="mb-0">
+                        Design & Development: Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs<br>
+                        Dashboard created for UW Madison GEOG 575 course Fall 2025.
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
+                    <p class="mb-0">
+                        Canadian Anti-Fraud Centre reporting data<br>
+                        Boundary data: Statistics Canada / Natural Resources Canada
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
+                    <p class="mb-0">
+                        Figures are based on reported cases only and do not capture
+                        unreported fraud incidents.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
     <script type="text/javascript" src="lib/bootstrap.min.js"></script>
@@ -138,7 +185,7 @@
     <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
 
     <script type="text/javascript" src="js/overview.js"></script>
-    
+
 
 </body>
 

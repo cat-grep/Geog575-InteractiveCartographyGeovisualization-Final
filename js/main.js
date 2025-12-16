@@ -40,8 +40,8 @@ let mapPathGenerator;
 let mapSvg;
 
 // PIE CHART --------------------------------
-const PIE_SIZE = 600;
-const PIE_RADIUS = PIE_SIZE / 2 - 100;
+const PIE_VIEWBOX_SIZE = 400; 
+const PIE_RADIUS = PIE_VIEWBOX_SIZE / 2 - 100;
 
 // inner radius for circular barplot
 const CIRC_INNER_RADIUS = 50;
@@ -54,13 +54,8 @@ const arc = d3.arc().innerRadius(0).outerRadius(PIE_RADIUS);
 //   .append("g")
 //   .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
 
-const pieCategoryG = d3.select("#pie-category")
-  .append("g")
-  .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
-
-const pieMethodG = d3.select("#pie-method")
-  .append("g")
-  .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
+const pieCategoryG = setupResponsivePie("#pie-category");
+const pieMethodG = setupResponsivePie("#pie-method");
 
 // LINE CHART --------------------------------
 const TREND_WIDTH = 700;
@@ -220,6 +215,20 @@ function getFilters() {
     age: ageSelect ? ageSelect.node().value : "all",
     region: regionSelect ? regionSelect.node().value : "all",
   };
+}
+
+function setupResponsivePie(selectorId) {
+  return d3.select(selectorId)
+    // "viewBox" defines the internal coordinate system (0 0 600 600)
+    .attr("viewBox", `0 0 ${PIE_VIEWBOX_SIZE} ${PIE_VIEWBOX_SIZE}`)
+    // "preserveAspectRatio" ensures it doesn't stretch/distort
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    // CSS to make it fit the container
+    .style("width", "auto")
+    .style("height", "80%")
+    .append("g")
+    // Move (0,0) to the center of the box
+    .attr("transform", `translate(${PIE_VIEWBOX_SIZE / 2},${PIE_VIEWBOX_SIZE / 2})`);
 }
 
 // -------------------------------------------------------------------
