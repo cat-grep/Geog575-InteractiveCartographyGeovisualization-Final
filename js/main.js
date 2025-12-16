@@ -434,7 +434,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
     .append("text")
     .merge(labels)
     .text(d => d.key)
-    .style("font-size", "0.8em")
+    .style("font-size", "0.7em")
     .style("fill", "#ffffff")              // white labels
     .attr("alignment-baseline", "middle")
     .attr("transform", d => {
@@ -693,9 +693,6 @@ function updateControls() {
   const fmtMoney = d3.format(",.2f");
   const fmtDate = d3.timeFormat("%Y-%m-%d");
 
-  const summaryLines = [];
-
-  const period = `${fmtDate(oneYearAgo)} – ${fmtDate(maxDate)}`;
   const casesStr = fmtInt(totalCases);
   const lossStr = fmtMoney(totalLoss);
 

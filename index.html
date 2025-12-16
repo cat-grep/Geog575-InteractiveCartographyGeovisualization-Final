@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Personal Risk</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
     <link rel="stylesheet" href="./lib/bootstrap.min.css">
 
@@ -19,9 +20,12 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom py-3">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-light" href="index.html">Canada Fraud Watch</a>
+            <a class="navbar-brand fw-bold text-light" href="index.html">
+                <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
+                Canada Fraud Watch
+            </a>
 
             <!-- Mobile toggle button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -54,14 +58,18 @@
     </nav>
 
     <div id="controls" class="col-12">
-        <p class="col-10 col-lg-6 mx-auto mt-4">That strange text message. The robocall you almost answered. The email
+        <p class="col-10 col-lg-6 mx-auto mt-3 text-center">That strange text message. The robocall you almost answered.
+            The email
             that looked legitimate.
-            Fraud has become a shared Canadian experience, impacting everyone from students to seniors.</p>
-        <p class="col-10 col-lg-6 mx-auto">But how close is the risk to you?
+            Fraud has become a shared Canadian experience, impacting everyone from students to seniors.
+            <img src="img/personal_experience.png" class="img-fluid mt-3" alt="fraud personal experience">
+        </p>
+        
+        <p class="col-10 col-lg-6 mx-auto text-center">But <strong>how close is the risk to you?</strong>
             We built this interactive tool to turn abstract numbers into a personal reality check. See how the data
             looks from <strong>your perspective:</strong>
         </p>
-        <p class="col-10 col-lg-6 mx-auto mb-5 picker-row text-center">
+        <p class="col-10 col-lg-6 mx-auto mb-4 picker-row text-center">
             Here is how fraud affects
             <select id="genderSelect" class="form-select d-inline-block w-auto mx-1"></select>
             aged
@@ -110,12 +118,12 @@
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>How are they reaching you?</h2>
             <p>Fraudsters adapt to your communication habits: phone, text, email, social apps, or online platforms.</p>
-            <svg id="pie-method" width="450" height="450"></svg>
+            <svg id="pie-method" width="400" height="400"></svg>
         </div>
 
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>What types of fraud are people experiencing?</h2>
-            <svg id="pie-category" width="450" height="450"></svg>
+            <svg id="pie-category" width="400" height="400"></svg>
         </div>
 
         <blockquote class="blockquote col-8 col-lg-4 mx-auto mt-5 mb-5 text-center text-muted">
@@ -161,8 +169,8 @@
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
                     <p class="mb-0">
-                        Canadian Anti-Fraud Centre reporting data<br>
-                        Boundary data: Statistics Canada / Natural Resources Canada
+                        <a href="https://open.canada.ca/data/en/dataset/6a09c998-cddb-4a22-beff-4dca67ab892f/resource/43c67af5-e598-4a9b-a484-fe1cb5d775b5" target="_blank">Centre reporting data</a><br/>
+                        <a href="https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21" target="_blank">Statistics Canada: 2021 Census – Boundary files</a><br/>
                     </p>
                 </div>
 

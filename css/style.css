@@ -99,10 +99,10 @@ header h1 {
   padding-bottom: 0.5rem;
 }
 
-#pie-category,
+/* #pie-category,
 #pie-method {
   overflow: visible;
-}
+} */
 
 footer h6 {
   font-size: 0.85rem;
@@ -111,4 +111,14 @@ footer h6 {
 
 footer p {
   font-size: 0.8rem;
+}
+
+a {
+    color: #4da3ff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #8cc7ff;
+    text-decoration: underline;
 }

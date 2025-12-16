@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Big Picture</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
     <link rel="stylesheet" href="./lib/bootstrap.min.css">
 
@@ -21,9 +22,12 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom py-3">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-light" href="index.html">Canada Fraud Watch</a>
+            <a class="navbar-brand fw-bold text-light" href="index.html">
+                <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
+                Canada Fraud Watch
+            </a>
 
             <!-- Mobile toggle button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -161,8 +165,10 @@
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
                     <p class="mb-0">
-                        Canadian Anti-Fraud Centre reporting data<br>
-                        Boundary data: Statistics Canada / Natural Resources Canada
+                        <a href="https://open.canada.ca/data/en/dataset/6a09c998-cddb-4a22-beff-4dca67ab892f/resource/43c67af5-e598-4a9b-a484-fe1cb5d775b5"
+                            target="_blank">Centre reporting data</a><br />
+                        <a href="https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21"
+                            target="_blank">Statistics Canada: 2021 Census – Boundary files</a><br />
                     </p>
                 </div>
 
