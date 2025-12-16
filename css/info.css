@@ -1,7 +1,24 @@
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: 'Exo 2', sans-serif;
     color: #ffffff;
     background-color: #2f2f2f;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+a {
+    color: #4da3ff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #8cc7ff;
+    text-decoration: underline;
 }
 
 .intro {
@@ -20,10 +37,33 @@ body {
     text-align: center;
 }
 
+.list-wrapper {
+    width: 100%;
+    margin: 2rem auto 0;
+    text-align: center;
+}
+
+.list-wrapper ul {
+    list-style-position: inside;
+    padding-left: 0;
+    margin: 0 auto;
+}
+
+.list-wrapper li {
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.list-wrapper li::marker {
+    font-size: 1.5em;
+    color: #ffffff;
+}
+
 .scroll-box {
     background-color: #454545;
     color: white;
     border-radius: 20px;
+    padding: 2rem 5%;
 }
 
 .scroll-text {
@@ -50,4 +90,13 @@ body {
 
 .slideshow-box {
     padding: 1.5rem;
+}
+
+footer h6 {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+}
+
+footer p {
+    font-size: 0.8rem;
 }
