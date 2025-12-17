@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Personal Risk</title>
+  <title>Canada Fraud Watch - Side-by-Side</title>
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
   <!-- Bootstrap CSS -->
@@ -26,102 +26,113 @@
 <body>
   <!-- Navbar (same as your other pages) -->
   <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-light" href="index.html">
-            <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
-            Canada Fraud Watch
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-          aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-light" href="index.html">
+        <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
+        Canada Fraud Watch
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-          <ul class="navbar-nav mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
-            <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
-            <li class="nav-item">
-              <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
-                href="comparison.html">Side-by-Side</a>
-            </li>
-            <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
-          </ul>
-        </div>
+      <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
+          <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
+          <li class="nav-item">
+            <a class="nav-link active text-white bg-primary rounded px-3" aria-current="page"
+              href="comparison.html">Side-by-Side</a>
+          </li>
+          <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
+        </ul>
       </div>
+    </div>
   </nav>
 
   <!-- Main content -->
-  <div class="container my-4">
-    <h2 class="mb-4">Compare Two Provinces Side‑by‑Side</h2>
-    <hr>
+  <div id="controls">
+    <h2 class="col-12 text-center my-2">Compare Two Provinces Side‑by‑Side</h2>
   </div>
 
   <!-- Side-by-side layout: map and controls on left, charts on right -->
-  <div class="row">
-    <div class="col-lg-5">
-      <!-- MAP -->
-      <div class="map-container mb-3">
-        <svg id="map1"></svg>
-        <div id="legend1" class="map-legend"></div>
-      </div>
-
-      <!-- SUMMARY counters below the map -->
-      <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
-      </div>
-
-      <!-- CONTROLS below the map -->
-      <div class="map-controls">
-        <div class="mb-2">
-          <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
-          <select id="provinceSelect1" class="form-select"></select>
-        </div>
-
-        <div class="mb-2">
-          <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
-          <select id="provinceSelect2" class="form-select"></select>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Metric</label>
-          <div class="btn-group" role="group">
-            <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases" autocomplete="off"
-              checked>
-            <label class="btn btn-outline-primary" for="metricCases">Cases</label>
-
-            <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss" autocomplete="off">
-            <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
-          </div>
-        </div>
-
-        <div class="year-controls mt-3">
-          <label for="yearSlider">Year:</label>
-          <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
-          <span id="yearLabel">2025</span>
-          <button id="allYearsBtn">All Years</button>
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-10 mx-auto">
+        <!-- MAP -->
+        <div class="map-container mb-3">
+          <svg id="map1"></svg>
+          <div id="legend1" class="map-legend"></div>
         </div>
       </div>
     </div>
-
-    <!-- CHARTS: side-by-side province chart sections (on the right)-->
-    <div class="col-lg-7">
-      <div class="row gx-3">
-        <div class="col-md-6">
-          <div id="charts-province1" class="province-chart-set mb-4">
-            <h3 id="charts-title1"></h3>
-            <div id="catChart1" class="chart"></div>
-            <div id="methodChart1" class="chart"></div>
-            <div id="ageChart1" class="chart"></div>
-            <div id="monthChart1" class="chart"></div>
-          </div>
+    <div class="row">
+      <div class="col-10 mx-auto">
+        <!-- SUMMARY counters below the map -->
+        <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
         </div>
 
-        <div class="col-md-6">
-          <div id="charts-province2" class="province-chart-set">
-            <h3 id="charts-title2"></h3>
-            <div id="catChart2" class="chart"></div>
-            <div id="methodChart2" class="chart"></div>
-            <div id="ageChart2" class="chart"></div>
-            <div id="monthChart2" class="chart"></div>
+        <!-- CONTROLS below the map -->
+        <div class="map-controls">
+          <div class="row">
+            <div class="col">
+              <div class="mb-2">
+                <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
+                <select id="provinceSelect1" class="form-select"></select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="mb-2">
+                <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
+                <select id="provinceSelect2" class="form-select"></select>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-4">
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Metric</label>
+              <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases"
+                  autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="metricCases">Cases</label>
+                <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss"
+                  autocomplete="off">
+                <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
+              </div>
+            </div>
+            <div class="year-controls d-flex align-items-center gap-2">
+              <label for="yearSlider" class="mb-0">Year:</label>
+              <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
+              <span id="yearLabel">2025</span>
+              <button id="allYearsBtn">All Years</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS: side-by-side province chart sections (on the right)-->
+      <div class="col-10 mx-auto mt-4">
+        <div class="charts-wrapper">
+          <div class="row">
+            <div class="col-6">
+              <div id="charts-province1" class="province-chart-set mb-4">
+                <h3 id="charts-title1"></h3>
+                <div id="catChart1" class="chart"></div>
+                <div id="methodChart1" class="chart"></div>
+                <div id="ageChart1" class="chart"></div>
+                <div id="monthChart1" class="chart"></div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div id="charts-province2" class="province-chart-set">
+                <h3 id="charts-title2"></h3>
+                <div id="catChart2" class="chart"></div>
+                <div id="methodChart2" class="chart"></div>
+                <div id="ageChart2" class="chart"></div>
+                <div id="monthChart2" class="chart"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -129,36 +140,36 @@
   </div>
 
   <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
-        <div class="col-10 mx-auto">
-            <div class="row small">
-                <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
-                    <p class="mb-0">
-                        Design & Development: Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs<br>
-                        Dashboard created for UW Madison GEOG 575 course Fall 2025.
-                    </p>
-                </div>
-
-                <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
-                    <p class="mb-0">
-                        <a href="https://open.canada.ca/data/en/dataset/6a09c998-cddb-4a22-beff-4dca67ab892f/resource/43c67af5-e598-4a9b-a484-fe1cb5d775b5"
-                            target="_blank">Centre reporting data</a><br />
-                        <a href="https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21"
-                            target="_blank">Statistics Canada: 2021 Census – Boundary files</a><br />
-                    </p>
-                </div>
-
-                <div class="col-12 col-md-4">
-                    <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
-                    <p class="mb-0">
-                        Figures are based on reported cases only and do not capture
-                        unreported fraud incidents.
-                    </p>
-                </div>
-            </div>
+    <div class="col-10 mx-auto">
+      <div class="row small">
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
+          <p class="mb-0">
+            Design & Development: Eugenie Huang, Elijah Gardner Woods, Darbie Gibbs<br>
+            Dashboard created for UW Madison GEOG 575 course Fall 2025.
+          </p>
         </div>
-    </footer>
+
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
+          <p class="mb-0">
+            <a href="https://open.canada.ca/data/en/dataset/6a09c998-cddb-4a22-beff-4dca67ab892f/resource/43c67af5-e598-4a9b-a484-fe1cb5d775b5"
+              target="_blank">Centre reporting data</a><br />
+            <a href="https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21"
+              target="_blank">Statistics Canada: 2021 Census – Boundary files</a><br />
+          </p>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
+          <p class="mb-0">
+            Figures are based on reported cases only and do not capture
+            unreported fraud incidents.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 
 

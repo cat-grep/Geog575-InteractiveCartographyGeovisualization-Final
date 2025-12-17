@@ -199,17 +199,21 @@ function drawMap(svgSelector, legendSelector, highlightProvs, metric, valueByPro
   const svg = d3.select(svgSelector);
   const container = svg.node().parentNode;
   const width = container.clientWidth;
-  const height = 150; // fixed height for each map frame
+  const height = container.clientHeight;
+  // const height = 150; // fixed height for each map frame
 
   svg.selectAll("*").remove(); // Clear previous render
   svg.attr("width", width).attr("height", height);
 
   // Map projection: centered with north up
-  const projection = d3.geoConicConformal()
-    .center([-115, 43])
-    .rotate([45, 35, 30]) // no tilt so north is up
-    .scale(width * 1)
-    .translate([width / 2, height / 2]);
+  // const projection = d3.geoConicConformal()
+  //   .center([-115, 43])
+  //   .rotate([45, 35, 30]) // no tilt so north is up
+  //   .scale(width * 1)
+  //   .translate([width / 2, height / 2]);
+  const projection = d3.geoTransverseMercator()
+    .rotate([96, 0])
+    .fitSize([width, height], geojson);
 
   const path = d3.geoPath().projection(projection);
 
@@ -475,7 +479,8 @@ function buildPieChart(containerSelector, data, title) {
   tempSvg.remove();
 
   // ---------- STEP 2: Dynamic margin ----------
-  const margin = Math.max(30, longestLabelWidth * 0.6);
+  // const margin = Math.max(30, longestLabelWidth * 0.6);
+  const margin = longestLabelWidth + 10;
 
   // Title
   container.append("div")
