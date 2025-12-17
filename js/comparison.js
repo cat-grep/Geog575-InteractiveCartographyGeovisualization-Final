@@ -480,7 +480,8 @@ function buildPieChart(containerSelector, data, title) {
 
   // ---------- STEP 2: Dynamic margin ----------
   // const margin = Math.max(30, longestLabelWidth * 0.6);
-  const margin = longestLabelWidth + 10;
+  const xMargin = longestLabelWidth + 10;
+  const yMargin = 10;
 
   // Title
   container.append("div")
@@ -491,7 +492,7 @@ function buildPieChart(containerSelector, data, title) {
   const svg = container.append("svg")
     .attr(
       "viewBox",
-      `${-size / 2 - margin} ${-size / 2 - margin} ${size + margin * 2} ${size + margin * 2}`
+      `${-size / 2 - xMargin} ${-size / 2 - yMargin} ${size + xMargin * 2} ${size + yMargin * 2}`
     )
     .attr("preserveAspectRatio", "xMidYMid meet")
     .classed("responsive-svg", true);
