@@ -2,42 +2,53 @@
 <html lang="en">
 
 <head>
+    <!-- Basic document metadata -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Page title (shown in browser tab and used by screen readers) -->
     <title>Canada Fraud Watch - Personal Risk</title>
+
+    <!-- Favicon for browser tab -->
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="./lib/bootstrap.min.css">
 
+    <!-- Custom project styles -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Google Fonts preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Project fonts: Exo 2 + Josefin Slab -->
     <link
         href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
         rel="stylesheet">
-
 </head>
 
 <body>
+    <!-- Global navigation bar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
         <div class="container-fluid">
+            <!-- Brand / home link -->
             <a class="navbar-brand fw-bold text-light" href="index.html">
                 <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
                 Canada Fraud Watch
             </a>
 
-            <!-- Mobile toggle button -->
+            <!-- Mobile toggle button (collapses nav links on small screens) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Nav links -->
+            <!-- Main nav links (right-aligned on larger screens) -->
             <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <!-- mark current page as active -->
+                        <!-- Current page is visually highlighted and marked as active -->
                         <a class="nav-link active text-white bg-success rounded px-3" aria-current="page"
                             href="index.html">
                             Personal Risk
@@ -57,18 +68,26 @@
         </div>
     </nav>
 
+    <!-- Intro + demographic selectors block -->
     <div id="controls" class="col-12">
-        <p class="col-10 col-lg-6 mx-auto mt-3 text-center">That strange text message. The robocall you almost answered.
+        <!-- Intro narrative text with supporting image -->
+        <p class="col-10 col-lg-6 mx-auto mt-3 text-center">
+            That strange text message. The robocall you almost answered.
             The email
             that looked legitimate.
             Fraud has become a shared Canadian experience, impacting everyone from students to seniors.
             <img src="img/personal_experience.png" class="img-fluid mt-3" alt="fraud personal experience">
         </p>
-        
-        <p class="col-10 col-lg-6 mx-auto text-center">But <strong>how close is the risk to you?</strong>
+
+        <!-- Bridging paragraph explaining purpose of the tool -->
+        <p class="col-10 col-lg-6 mx-auto text-center">
+            But <strong>how close is the risk to you?</strong>
             We built this interactive tool to turn abstract numbers into a personal reality check. See how the data
             looks from <strong>your perspective:</strong>
         </p>
+
+        <!-- Demographic picker row (gender, age, region) -->
+        <!-- Note: select elements are populated dynamically via JS (main.js) -->
         <p class="col-10 col-lg-6 mx-auto mb-4 picker-row text-center">
             Here is how fraud affects
             <select id="genderSelect" class="form-select d-inline-block w-auto mx-1"></select>
@@ -79,12 +98,13 @@
         </p>
     </div>
 
-
+    <!-- Main visual content container -->
     <div class="container-fluid">
 
+        <!-- Summary section: mini map + high-level metrics -->
         <div id="summary" class="col-10 col-lg-6 mx-auto mt-4">
 
-            <!-- Date range controls -->
+            <!-- Date range controls (boundaries applied to all visualizations) -->
             <div class="row g-2 align-items-center mb-3 text-center">
                 <div class="col-auto">
                     <label for="dateStart" class="form-label mb-0 small">From</label>
@@ -101,31 +121,36 @@
             </div>
 
             <div class="row">
+                <!-- Mini-map container (D3-driven SVG) -->
                 <div id="mini-map-container" class="col-10 col-lg-6 mx-auto panel mb-3">
+                    <!-- D3 uses this <svg> to render regional choropleth / map symbols -->
                     <svg id="mini-map-svg" width="100%" height="400"></svg>
                 </div>
 
-                <!-- Summary cards container -->
+                <!-- Summary metrics / text for current demographic + filters -->
+                <!-- Content is injected via JS; initial state shows "Loading data…" -->
                 <div id="summary-text">
                     Loading data…
                 </div>
             </div>
         </div>
 
-
-
-
+        <!-- Pie chart: solicitation methods (phone, text, email, social, etc.) -->
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>How are they reaching you?</h2>
             <p>Fraudsters adapt to your communication habits: phone, text, email, social apps, or online platforms.</p>
+            <!-- D3 pie chart (methods) rendered into this SVG -->
             <svg id="pie-method" width="400" height="400"></svg>
         </div>
 
+        <!-- Pie chart: fraud type distribution for current demographic -->
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>What types of fraud are people experiencing?</h2>
+            <!-- D3 pie chart (categories) rendered into this SVG -->
             <svg id="pie-category" width="400" height="400"></svg>
         </div>
 
+        <!-- Narrative pull quote to break up visuals and re-center on lived experience -->
         <blockquote class="blockquote col-8 col-lg-4 mx-auto mt-5 mb-5 text-center text-muted">
             <p><i>“It begins with a message that looks like it’s from your bank. Or a phone call that sounds urgent. In
                     a split second, you’re asked to verify a transaction, confirm a package, or help a family member in
@@ -133,11 +158,13 @@
                     of Canadians each year.”</i></p>
         </blockquote>
 
+        <!-- Trend chart: time series of cases + financial losses -->
         <div class="col-10 col-lg-6 mx-auto mt-5 text-center">
             <h2>How is fraud evolving over time?</h2>
             <p>Trends in reported cases and financial loss for your selected demographic and region.</p>
 
             <div id="trend-container">
+                <!-- Trend line chart (D3) for cases + losses over time -->
                 <!-- <div class="text-center">
                     <h5>Fraud Cases and Financial Loss Over Time</h5>
                 </div> -->
@@ -145,6 +172,7 @@
             </div>
         </div>
 
+        <!-- Closing narrative pull quote -->
         <blockquote class="blockquote col-8 col-lg-4 mx-auto mt-5 mb-5 text-center text-muted">
             <p><i>“Fraud is not only a financial crime—it is a social issue that affects trust, safety and everyday
                     life. By understanding these patterns and recognizing how they appear in our own communities, each
@@ -152,12 +180,15 @@
         </blockquote>
     </div>
 
+    <!-- Shared tooltip used by D3 charts (positioned and populated via JS) -->
     <div class="chart-tooltip" id="tooltip" style="display:none"></div>
     <!-- <div id="debug"></div> -->
 
+    <!-- Site footer: credits, data sources, caveats -->
     <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
         <div class="col-10 mx-auto">
             <div class="row small">
+                <!-- Project credits -->
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
                     <p class="mb-0">
@@ -166,6 +197,7 @@
                     </p>
                 </div>
 
+                <!-- Official data sources with outbound links -->
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
                     <p class="mb-0">
@@ -174,6 +206,7 @@
                     </p>
                 </div>
 
+                <!-- Notes / methodology caveats -->
                 <div class="col-12 col-md-4">
                     <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
                     <p class="mb-0">
@@ -185,13 +218,18 @@
         </div>
     </footer>
 
+    <!-- JS dependencies -->
+    <!-- jQuery (used by Bootstrap 5 here mainly for legacy / convenience) -->
     <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
+
+    <!-- Bootstrap JS bundle (includes Popper) -->
     <script type="text/javascript" src="lib/bootstrap.min.js"></script>
 
-    <!-- D3 + topojson from CDN -->
+    <!-- D3 + topojson from CDN for all SVG charting and map rendering -->
     <script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
     <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
 
+    <!-- Project-specific behavior: data loading, filtering, and chart rendering -->
     <script type="text/javascript" src="js/main.js"></script>
 
 </body>

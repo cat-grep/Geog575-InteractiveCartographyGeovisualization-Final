@@ -1,4 +1,9 @@
-html, body {
+/* -------------------------------------------------------------------------- */
+/* Base layout and typography                                                 */
+/* -------------------------------------------------------------------------- */
+
+html,
+body {
     height: 100%;
     margin: 0;
 }
@@ -13,6 +18,11 @@ body {
     flex-direction: column;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Header styling                                                             */
+/* -------------------------------------------------------------------------- */
+
 header {
     padding: 12px 20px;
     background: #2f2f2f;
@@ -25,6 +35,11 @@ header h1 {
     font-weight: 600;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Controls / filter bar                                                      */
+/* -------------------------------------------------------------------------- */
+
 #controls {
     display: flex;
     flex-wrap: wrap;
@@ -36,11 +51,22 @@ header h1 {
     font-size: 1.2rem;
 }
 
-#controls>div {
+#controls > div {
     display: flex;
     align-items: center;
     gap: 6px;
 }
+
+.picker-row {
+    line-height: 2.5;      /* taller line */
+    padding-top: 0.5rem;   /* optional */
+    padding-bottom: 0.5rem;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Panels and content                                                         */
+/* -------------------------------------------------------------------------- */
 
 .panel {
     background: #454545;
@@ -73,45 +99,53 @@ header h1 {
     padding: 0.5rem;
 }
 
+/* #pie-category,
+#pie-method {
+  overflow: visible;
+} */
+
 #debug {
     margin-top: 1rem;
     font-size: 0.8rem;
     color: #fff;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Tooltip for D3 charts                                                      */
+/* -------------------------------------------------------------------------- */
+
 .chart-tooltip {
-    position: absolute;      /* Essential for following the mouse */
+    position: absolute;        /* Essential for following the mouse */
     background-color: #2f2f2f; /* Or dark grey */
     color: #fff;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    pointer-events: none;    /* Essential to prevent the tooltip from capturing the mouse */
-    z-index: 9999;           /* Ensure it sits on top of everything */
+    pointer-events: none;      /* Essential to prevent the tooltip from capturing the mouse */
+    z-index: 9999;             /* Ensure it sits on top of everything */
     font-size: 0.9rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 
-.picker-row {
-  line-height: 2.5;      /* taller line */
-  padding-top: 0.5rem;   /* optional */
-  padding-bottom: 0.5rem;
-}
-
-/* #pie-category,
-#pie-method {
-  overflow: visible;
-} */
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
 
 footer h6 {
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
 }
 
 footer p {
-  font-size: 0.8rem;
+    font-size: 0.8rem;
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Links                                                                      */
+/* -------------------------------------------------------------------------- */
 
 a {
     color: #4da3ff;

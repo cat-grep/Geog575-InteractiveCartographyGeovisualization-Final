@@ -2,34 +2,44 @@
 <html lang="en">
 
 <head>
+    <!-- Basic document metadata -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Page title (browser tab + assistive tech) -->
     <title>Canada Fraud Watch - Learn About Fraud</title>
+
+    <!-- Favicon for browser tab -->
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
+    <!-- Scroll-driven sidecar/scrollmap layout styles -->
     <link rel="stylesheet" href="./lib/scrollmap.css">
+
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="./lib/bootstrap.min.css">
 
+    <!-- Page-specific styles for the “Learn About Fraud” narrative page -->
     <link rel="stylesheet" href="css/info.css">
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <!-- Google Fonts preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-
-
-
+    <!-- Project fonts: Exo 2 + Josefin Slab -->
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <!-- Global navigation bar (consistent across all dashboard pages) -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
         <div class="container-fluid">
+            <!-- Brand / home link -->
             <a class="navbar-brand fw-bold text-light" href="index.html">
                 <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
                 Canada Fraud Watch
             </a>
 
-            <!-- Mobile toggle button -->
+            <!-- Mobile toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,15 +48,19 @@
             <!-- Nav links -->
             <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
                 <ul class="navbar-nav mb-2 mb-lg-0">
+                    <!-- Link back to interactive personal-risk view -->
                     <li class="nav-item">
                         <a class="nav-link text-light" href="index.html">Personal Risk</a>
                     </li>
+                    <!-- Link to nationwide overview dashboard -->
                     <li class="nav-item">
                         <a class="nav-link text-light" href="overview.html">The Big Picture</a>
                     </li>
+                    <!-- Link to side-by-side comparison dashboard -->
                     <li class="nav-item">
                         <a class="nav-link text-light" href="comparison.html">Side-by-Side</a>
                     </li>
+                    <!-- Current page is marked as active -->
                     <li class="nav-item">
                         <!-- mark current page as active -->
                         <a class="nav-link active text-white bg-success rounded px-3" aria-current="page"
@@ -59,13 +73,10 @@
         </div>
     </nav>
 
-
-
+    <!-- Main content region for narrative explanations -->
     <div class="container-fluid">
-
-
         <div class="content">
-            <!--title block, background image is title image-->
+            <!-- Hero / title block: background image used as visual header -->
             <div class="row3" style="background-image:url(img/hero.jpg); width: 100%;
             aspect-ratio: 5 / 2;
             max-height: 75vh;
@@ -73,9 +84,8 @@
             background-size: contain;
             background-position: center;">
             </div>
-            
 
-            <!--text content block-->
+            <!-- “What is Fraud?” explanatory text block -->
             <div class="row3">
                 <div class="box">
                     <p class="infotitle">What is Fraud?</p>
@@ -87,7 +97,7 @@
                 </div>
             </div>
 
-
+            <!-- “Fraud in Canada” context block -->
             <div class="row3">
                 <div class="box">
                     <p class="infotitle">Fraud in Canada</p>
@@ -98,56 +108,70 @@
                 </div>
             </div>
 
-
+            <!-- Slideshow block: common fraud types (manual slides + prev/next controls) -->
             <div class="row3">
                 <div class="box slideshow-box">
                     <p class="infotitle">Common Fraud Types</p>
-                    <p class="infotext">Here are a few common types of scams. You can view more types <a href="https://antifraudcentre-centreantifraude.ca/scams-fraudes/azindex-eng.htm">here</a>.</p>
-                    <!-- Slideshow container -->
+                    <p class="infotext">
+                        Here are a few common types of scams. You can view more types
+                        <a href="https://antifraudcentre-centreantifraude.ca/scams-fraudes/azindex-eng.htm">here</a>.
+                    </p>
+
+                    <!-- Slideshow container: slides are stacked and toggled via JS -->
                     <div class="slideshow-container" style="box-shadow: 0 0 20px #766e97; background-color: #ffffff10; border-radius: 20px;">
-                        <!--slideshow content goes here-->
+                        <!-- Slide 1: Online scams -->
                         <div class="slide">
                             <p class="infotext"><b>Online Scams</b></p>
-                            <img src="img/Online.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;">
+                            <img src="img/Online.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;" alt="Illustration representing online scams">
                             <p class="caption">
-                                <span class="caption-text">Online scams use phishing emails, fake websites, text messages, and social media to impersonate
-                                legitimate organizations or individuals, tricking people into sending money or revealing personal and financial information.
-                                    </span>
-                            </p>
-                        </div>
-                        <div class="slide">
-                            <p class="infotext"><b>Identity Theft</b></p>
-                            <img src="img/identity.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;">
-                            <p class="caption">
-                                <span class="caption-text">Identity theft occurs when criminals steal personal information such as Social Insurance Numbers or banking details and use it to open accounts,
-                                access credit, or commit fraud without the victim’s knowledge.
-                                </span>
-                            </p>
-                        </div>
-                        <div class="slide">
-                            <p class="infotext"><b>Romance Scams</b></p>
-                            <img src="img/Romance.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;">
-                            <p class="caption">
-                                <span class="caption-text">Romance scams involve fraudsters forming fake online relationships through dating apps or social media,
-                                gradually building trust and emotional dependence before requesting money or financial assistance.
-                                </span>
-                            </p>
-                        </div>
-                        <div class="slide">
-                            <p class="infotext"><b>Tax and Government Impersonation Fraud</b></p>
-                            <img src="img/taxes.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;">
-                            <p class="caption">
-                                <span class="caption-text">In these scams, criminals pose as the Canada Revenue Agency or other government agencies, 
-                                often using threats of legal action or urgent payment demands to coerce victims into sending money or sharing sensitive information.
+                                <span class="caption-text">
+                                    Online scams use phishing emails, fake websites, text messages, and social media to impersonate
+                                    legitimate organizations or individuals, tricking people into sending money or revealing personal and financial information.
                                 </span>
                             </p>
                         </div>
 
-                        <!-- Next and previous buttons -->
+                        <!-- Slide 2: Identity theft -->
+                        <div class="slide">
+                            <p class="infotext"><b>Identity Theft</b></p>
+                            <img src="img/identity.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;" alt="Illustration representing identity theft">
+                            <p class="caption">
+                                <span class="caption-text">
+                                    Identity theft occurs when criminals steal personal information such as Social Insurance Numbers or banking details and use it to open accounts,
+                                    access credit, or commit fraud without the victim’s knowledge.
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Slide 3: Romance scams -->
+                        <div class="slide">
+                            <p class="infotext"><b>Romance Scams</b></p>
+                            <img src="img/Romance.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;" alt="Illustration representing romance scams">
+                            <p class="caption">
+                                <span class="caption-text">
+                                    Romance scams involve fraudsters forming fake online relationships through dating apps or social media,
+                                    gradually building trust and emotional dependence before requesting money or financial assistance.
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Slide 4: Tax and government impersonation -->
+                        <div class="slide">
+                            <p class="infotext"><b>Tax and Government Impersonation Fraud</b></p>
+                            <img src="img/taxes.jpg" style="width:100%; height:auto; object-fit:contain; max-height:80vh; border-radius:10px;" alt="Illustration representing tax and government impersonation fraud">
+                            <p class="caption">
+                                <span class="caption-text">
+                                    In these scams, criminals pose as the Canada Revenue Agency or other government agencies, 
+                                    often using threats of legal action or urgent payment demands to coerce victims into sending money or sharing sensitive information.
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Next and previous buttons (controlled in slideshow JS) -->
                         <a class="prev">&#10094;</a>
                         <a class="next">&#10095;</a>
 
-                        <!-- The dots/circles -->
+                        <!-- Slide indicators / dots (one per slide) -->
                         <div class="slideshow-dots">
                             <span class="dot" id="1"></span>
                             <span class="dot" id="2"></span>
@@ -158,44 +182,41 @@
                 </div>
             </div>
 
-
-
+            <!-- Common warning signs list -->
             <div class="row3">
                 <div class="box">
                     <p class="infotitle">Common Warning Signs</p>
                     <p class="infotext">
-                    Many fraud schemes share common warning signs that can help Canadians identify scams before financial harm occurs.
-                    <br><br><b>Scams often involve someone who:</b>
+                        Many fraud schemes share common warning signs that can help Canadians identify scams before financial harm occurs.
+                        <br><br><b>Scams often involve someone who:</b>
                     </p>
                     <div class="list-wrapper">
                         <ul>
-                        <li>Demands immediate payment.</li>
-                        <li>Uses threatening or urgent language.</li>
-                        <li>Asks for secrecy or confidentiality.</li>
-                        <li>Offers deals that seem too good to be true.</li>
-                        <li>Sends links and pressures you to click them.</li>
-                        <li>Requests personal or financial information.</li>
-                        <li>Asks for payment using cryptocurrency or gift cards.</li>
+                            <li>Demands immediate payment.</li>
+                            <li>Uses threatening or urgent language.</li>
+                            <li>Asks for secrecy or confidentiality.</li>
+                            <li>Offers deals that seem too good to be true.</li>
+                            <li>Sends links and pressures you to click them.</li>
+                            <li>Requests personal or financial information.</li>
+                            <li>Asks for payment using cryptocurrency or gift cards.</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-
-
-            <!--background images with text scrolling over them (sidecar)-->
+            <!-- Scroll-driven sidecar section: background images + foreground narrative cards -->
             <div class="scroll-container">    
-                <!--background images-->
+                <!-- Background images: swapped in/out as user scrolls down the foreground text blocks -->
                 <div class="background-item">
-                    <img src="img/fraud-2048851.jpg" data-slide="1" class="fill" style="width: 100%; height: auto; margin: 0 auto; display: block; object-fit: contain;">
-                    <img src="img/fraud-9645268.jpg" data-slide="2" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;">
-                    <img src="img/scam-7256138.png" data-slide="3" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;">
-                    <img src="img/cybercanada.png" data-slide="4" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;">
+                    <img src="img/fraud-2048851.jpg" data-slide="1" class="fill" style="width: 100%; height: auto; margin: 0 auto; display: block; object-fit: contain;" alt="Abstract concept image related to fraud">
+                    <img src="img/fraud-9645268.jpg" data-slide="2" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;" alt="Concept image showing online fraud themes">
+                    <img src="img/scam-7256138.png" data-slide="3" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;" alt="Concept image illustrating scam activity">
+                    <img src="img/cybercanada.png" data-slide="4" class="fill hidden" style="width: 100%; height: auto;  margin: 0 auto; display: block; object-fit: contain;" alt="Stylized illustration of cybercrime in Canada">
                 </div>
 
-
-                <!--foreground text blocks-->
+                <!-- Foreground narrative cards: each block is associated with a background slide -->
                 <div class="foreground-item">
+                    <!-- Card 1: Who tracks fraud in Canada -->
                     <div class="row3">
                         <div class="center background-transparent rounded" style="box-shadow: 0 0 20px #766e97; background-color: #302850; border-radius: 20px;">
                             <p class="infotitle">Who Tracks It</p>
@@ -222,11 +243,15 @@
                             </p>
                         </div>
                     </div>
+
+                    <!-- Card 2: Fraud laws (Criminal Code Section 380) -->
                     <div class="row3">
                         <div class="center background-transparent rounded" style="box-shadow: 0 0 20px #766e97; background-color: #302850; border-radius: 20px;">
                             <p class="infotitle">Fraud Laws</p>
                             <p class="infotext">
-                                Fraud in Canada is primarily governed by <a href="https://laws-lois.justice.gc.ca/eng/acts/C-46/section-380.html">Section 380</a> of the Criminal Code of Canada, which makes it a criminal offence to use deceit, falsehood, or other dishonest means to deprive someone of money, property, or services. 
+                                Fraud in Canada is primarily governed by
+                                <a href="https://laws-lois.justice.gc.ca/eng/acts/C-46/section-380.html">Section 380</a>
+                                of the Criminal Code of Canada, which makes it a criminal offence to use deceit, falsehood, or other dishonest means to deprive someone of money, property, or services. 
                                 The law applies even if the fraud does not fully succeed, as creating a risk of financial loss is sufficient for an offence to occur.
 
                                 <br><br>Section 380 is intentionally broad, allowing it to cover both traditional forms of fraud and modern digital schemes. This includes online scams, identity theft, investment fraud,
@@ -234,6 +259,8 @@
                             </p>
                         </div>
                     </div>
+
+                    <!-- Card 3: Punishments and sentencing factors -->
                     <div class="row3">
                         <div class="center background-transparent rounded" style="box-shadow: 0 0 20px #766e97; background-color: #302850; border-radius: 20px;">
                             <p class="infotitle">Punishments</p>
@@ -244,51 +271,60 @@
                             </p>
                             <div class="list-wrapper">
                                 <ul>
-                                <li>The amount of money involved.</li>
-                                <li>The number of victims.</li>
-                                <li>Whether the fraud was planned or sophisticated.</li>
-                                <li>Abuse of trust or authority.</li>
-                                <li>The financial and emotional impact on victims.</li>
+                                    <li>The amount of money involved.</li>
+                                    <li>The number of victims.</li>
+                                    <li>Whether the fraud was planned or sophisticated.</li>
+                                    <li>Abuse of trust or authority.</li>
+                                    <li>The financial and emotional impact on victims.</li>
                                 </ul>
                             </div>
                             <p class="infotext">
-                            <br><br><b>Common Sentences for Fraud in Canada:</b>
+                                <br><br><b>Common Sentences for Fraud in Canada:</b>
                             </p>
                             <div class="list-wrapper">
                                 <ul>
-                                <li>Fines or probation for minor fraud offences.</li>
-                                <li>Restitution orders requiring offenders to repay victims.</li>
-                                <li>Conditional sentences or jail time for more serious or repeated fraud.</li>
-                                <li>Prison sentences of several years for large-scale or highly planned fraud.</li>
-                                <li>Mandatory minimum sentence of 2 years imprisonment for fraud over $1 million.</li>
+                                    <li>Fines or probation for minor fraud offences.</li>
+                                    <li>Restitution orders requiring offenders to repay victims.</li>
+                                    <li>Conditional sentences or jail time for more serious or repeated fraud.</li>
+                                    <li>Prison sentences of several years for large-scale or highly planned fraud.</li>
+                                    <li>Mandatory minimum sentence of 2 years imprisonment for fraud over $1 million.</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Card 4: Reporting and prevention guidance -->
                     <div class="row3">
                         <div class="center background-transparent rounded" style="box-shadow: 0 0 20px #766e97; background-color: #302850; border-radius: 20px;">
                             <p class="infotitle">Reporting & Prevention</p>
                             <p class="infotext">
                                 Recognizing scam warning signs and reporting suspected fraud helps protect individuals and supports national efforts to track and prevent fraud. 
-                                Canadians are encouraged to report fraud to the <a href="https://antifraudcentre-centreantifraude.ca">Canadian Anti-Fraud Centre</a> and remain informed about evolving scam tactics.
+                                Canadians are encouraged to report fraud to the
+                                <a href="https://antifraudcentre-centreantifraude.ca">Canadian Anti-Fraud Centre</a>
+                                and remain informed about evolving scam tactics.
 
                                 <br><br><b>Why Reporting Matters</b><br>
                                 Because fraud is significantly underreported, tracking systems are essential for identifying trends, allocating enforcement resources, and preventing future harm. 
                                 Accurate reporting helps authorities detect widespread scams, warn the public, and improve fraud prevention efforts nationwide.
                                 <br><br><br>
                             </p>
-                            <p class="infotitle">If you are a victim of Fraud please visit <a href="https://antifraudcentre-centreantifraude.ca/scams-fraudes/victim-victime-eng.htm">CAFC's Website</a> for next steps.</p>
+                            <p class="infotitle">
+                                If you are a victim of Fraud please visit
+                                <a href="https://antifraudcentre-centreantifraude.ca/scams-fraudes/victim-victime-eng.htm">CAFC's Website</a>
+                                for next steps.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
+        </div> <!-- /content -->
+    </div> <!-- /container-fluid -->
 
-
-
+    <!-- Footer: credits, data sources, and image attributions -->
     <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
         <div class="col-10 mx-auto">
             <div class="row small">
+                <!-- Project credits -->
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
                     <p class="mb-0">
@@ -297,6 +333,7 @@
                     </p>
                 </div>
 
+                <!-- Institutional and legal information sources -->
                 <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
                     <p class="mb-0">
@@ -306,24 +343,30 @@
                     </p>
                 </div>
 
+                <!-- Additional data sources and image attributions -->
                 <div class="col-12 col-md-4">
                     <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
                     <p class="mb-0">
                         <a href="https://www.canada.ca/en/revenue-agency/campaigns/fraud-scams.html?utm_source=chatgpt.com">Canada Revenue Agency (CRA)</a><br>
-                        Images by <a href="https://pixabay.com/users/mrganso-607585/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=2048851">Sebastian Ganso, </a>
-                            <a href="https://pixabay.com/users/mohamed_hassan-5229782/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9645268">Mohamed Hassan, </a>
-                            <a href="https://pixabay.com/users/thedigitalartist-202249/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=7256138">Pete Linforth, </a>
-                            <a href="https://pixabay.com/users/geralt-9301/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=2048851">Geralt, </a>
-                            <a href="https://pixabay.com/users/truyentranhmoi123-18205159/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5551318">Alex Tran, </a>
-                            <a href="https://pixabay.com/users/munir777-795571/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5644462">Munir777</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5644462">Pixabay</a>
+                        Images by
+                        <a href="https://pixabay.com/users/mrganso-607585/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=2048851">Sebastian Ganso, </a>
+                        <a href="https://pixabay.com/users/mohamed_hassan-5229782/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9645268">Mohamed Hassan, </a>
+                        <a href="https://pixabay.com/users/thedigitalartist-202249/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=7256138">Pete Linforth, </a>
+                        <a href="https://pixabay.com/users/geralt-9301/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=2048851">Geralt, </a>
+                        <a href="https://pixabay.com/users/truyentranhmoi123-18205159/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5551318">Alex Tran, </a>
+                        <a href="https://pixabay.com/users/munir777-795571/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5644462">Munir777</a>
+                        from
+                        <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5644462">Pixabay</a>
                     </p>
                 </div>
             </div>
         </div>
     </footer>
 
-
+    <!-- Scrollmap script: handles sidecar/scroll-triggered background swap behavior -->
     <script type="text/javascript" src="./lib/scrollmap.js"></script>
+
+    <!-- Bootstrap JS (navbar collapse and components) -->
     <script type="text/javascript" src="./lib/bootstrap.min.js"></script>
 </body>
 

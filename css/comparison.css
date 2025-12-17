@@ -1,6 +1,7 @@
-/* comparison.css */
+/* -------------------------------------------------------------------------- */
+/* Page gutter margins                                                        */
+/* -------------------------------------------------------------------------- */
 
-/* Page gutter margins */
 .row {
   margin-left: -8px;
   margin-right: -8px;
@@ -11,6 +12,10 @@
   padding-right: 16px;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Map container + summary + controls                                         */
+/* -------------------------------------------------------------------------- */
 
 /* Ensure the SVG maps take up full width of the container */
 .map-container {
@@ -60,7 +65,16 @@
   margin: 0 auto;
 }
 
+.summary {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+}
 
+
+/* -------------------------------------------------------------------------- */
+/* Year controls                                                              */
+/* -------------------------------------------------------------------------- */
 
 /* Year controls */
 .year-controls {
@@ -101,6 +115,9 @@
 }
 
 
+/* -------------------------------------------------------------------------- */
+/* Legend inside the map frame                                                */
+/* -------------------------------------------------------------------------- */
 
 /* -------- Legend inside the map frame -------- */
 .legend-year-label {
@@ -118,7 +135,7 @@
 
 /* Framed legend box */
 .legend-inner-box {
-  max-width: 100%;
+  max-width: 220px;
   overflow-x: auto;
   background: #454545ec;
   border: 1px solid #888;
@@ -143,7 +160,6 @@
   align-items: flex-start;
 }
 
-
 .legend-item {
   display: flex;
   align-items: center;
@@ -157,10 +173,6 @@
   height: 14px;
   border: 1px solid #555;
   border-radius: 2px;
-}
-
-.legend-inner-box {
-  max-width: 220px;
 }
 
 /* Legend Toggle Button  */
@@ -179,13 +191,10 @@
   background: #59339d;
 }
 
-.summary {
-  margin-top: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-}
 
-
+/* -------------------------------------------------------------------------- */
+/* Tooltip style                                                              */
+/* -------------------------------------------------------------------------- */
 
 /* Tooltip style */
 .province-tooltip {
@@ -203,6 +212,9 @@
 }
 
 
+/* -------------------------------------------------------------------------- */
+/* Right column layout (province chart blocks)                                */
+/* -------------------------------------------------------------------------- */
 
 /* ----------- RIGHT COLUMN LAYOUT ----------- */
 /* Border + padding for each province chart block */
@@ -241,6 +253,10 @@
 } */
 
 
+/* -------------------------------------------------------------------------- */
+/* Chart container + shared chart styling                                     */
+/* -------------------------------------------------------------------------- */
+
 /* ----------- CHART CONTAINER ----------- */
 .charts-wrapper {
   max-width: 1100px;
@@ -254,7 +270,7 @@
   align-items: flex-start;
   text-align: left;
   padding: 10px;
-  margin-bottom: -8px; /* ⬅️ reduce from default spacing */
+  margin-bottom: -8px; /* reduce from default spacing */
 }
 
 .chart-title {
@@ -283,6 +299,9 @@
 }
 
 
+/* -------------------------------------------------------------------------- */
+/* Month boxes (top months summary)                                           */
+/* -------------------------------------------------------------------------- */
 
 /* ----------- MONTH BOXES ----------- */
 .responsive-months {
@@ -309,7 +328,6 @@
   margin-top: 10px;
 }
 
-
 .month-name {
   font-size: 0.85rem;
   font-weight: 600;
@@ -321,6 +339,10 @@
   color: #874de3;
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Metric toggle colors + Bootstrap overrides                                 */
+/* -------------------------------------------------------------------------- */
 
 /* -------- Metric toggle colors: green and purple-------- */
 .metric-cases {
@@ -339,7 +361,6 @@
 .month-value.loss {
   color: #9155ff;
 }
-
 
 .btn-outline-primary {
   color: #6f42c1;                 /* Bootstrap purple */

@@ -1,4 +1,9 @@
-html, body {
+/* -------------------------------------------------------------------------- */
+/* Global Layout & Typography                                                 */
+/* -------------------------------------------------------------------------- */
+
+html,
+body {
     height: 100%;
 }
 
@@ -7,9 +12,14 @@ body {
     color: #ffffff;
     background-color: #2f2f2f;
     min-height: 100vh;
-    display: grid;
+    display: grid;                  /* Header → content → footer */
     grid-template-rows: auto 1fr auto;
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Links                                                                      */
+/* -------------------------------------------------------------------------- */
 
 a {
     color: #4da3ff;
@@ -20,6 +30,11 @@ a:hover {
     color: #8cc7ff;
     text-decoration: underline;
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Typography Blocks (Intro, Titles, Text)                                    */
+/* -------------------------------------------------------------------------- */
 
 .intro {
     font-size: x-large;
@@ -36,6 +51,54 @@ a:hover {
     font-size: x-large;
     text-align: center;
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Section Containers (Row + Inner Box)                                       */
+/* -------------------------------------------------------------------------- */
+
+.row3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 4rem auto;
+    width: 100%;
+}
+
+.box {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2rem 5%;
+    background-color: #302850;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #766e97;
+}
+
+.slideshow-box {
+    padding: 1.5rem;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Scroll Text Blocks                                                         */
+/* -------------------------------------------------------------------------- */
+
+.scroll-box {
+    background-color: #454545;
+    color: white;
+    border-radius: 20px;
+    padding: 2rem 5%;
+}
+
+.scroll-text {
+    margin: 0;
+    font-size: larger;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Bullet List Styling                                                        */
+/* -------------------------------------------------------------------------- */
 
 .list-wrapper {
     width: 100%;
@@ -60,38 +123,10 @@ a:hover {
     color: #ffffff;
 }
 
-.scroll-box {
-    background-color: #454545;
-    color: white;
-    border-radius: 20px;
-    padding: 2rem 5%;
-}
 
-.scroll-text {
-    margin: 0;
-    font-size: larger;
-}
-
-.row3 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto 4rem auto;
-    width: 100%;
-}
-
-.box {
-    width: 80%;
-    margin: 0 auto;
-    padding: 2rem 5%;
-    background-color: #302850;
-    border-radius: 20px;
-    box-shadow: 0 0 20px #766e97;
-}
-
-.slideshow-box {
-    padding: 1.5rem;
-}
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
 
 footer h6 {
     font-size: 0.85rem;

@@ -1,6 +1,6 @@
-// -------------------------
-// Global state
-// -------------------------
+// -------------------------------------------------------------------
+// 1) GLOBAL STATE & CONSTANTS
+// -------------------------------------------------------------------
 const greenColor = "#1b9e77";
 const purpleColor = "#7570b3";
 
@@ -29,24 +29,22 @@ let genderSvg, genderG, genderRadius, genderWidth, genderHeight;
 
 const tooltip = d3.select("#tooltip");
 
-// -------------------------
-// Utility: formatters
-// -------------------------
+
+// -------------------------------------------------------------------
+// 2) FORMATTERS & SMALL HELPERS
+// -------------------------------------------------------------------
 const formatInt = d3.format(",.0f");
 const formatDollar = d3.format("$,");  // no decimals
 
 function formatMetricValue(value, metric) {
   if (!value || !isFinite(value)) return "0";
-  if (metric === "loss") {
-    return formatDollar(value);
-  } else {
-    return formatInt(value);
-  }
+  return metric === "loss" ? formatDollar(value) : formatInt(value);
 }
 
-// -------------------------
-// Load data
-// -------------------------
+
+// -------------------------------------------------------------------
+// 3) LOAD DATA (GEOJSON + AGGREGATED TREND)
+// -------------------------------------------------------------------
 Promise.all([
   d3.json("data/CanadaProvincesCartoBoundary_EPSG4326.geojson"),
   d3.json("data/CanadianAnti-FraudCentreReportingData_aggregated_for_trend.json")
@@ -70,18 +68,18 @@ Promise.all([
   console.error("Error loading data:", err);
 });
 
-// -------------------------
-// Preprocess data
-// -------------------------
+
+// -------------------------------------------------------------------
+// 4) PREPROCESS / NORMALIZE DATA
+// -------------------------------------------------------------------
 function preprocessData() {
-  // Normalize region names; keep only Canadian provinces in the boundary file
+  // Normalize region names; keep only provinces in boundary file
   const provinceMap = new Map();
   provinceNameSet.forEach(name => {
     provinceMap.set(name.toLowerCase(), name);
   });
 
   function normalizeRegion(raw) {
-    // console.log("Normalizing region:", raw);
     if (!raw) return null;
     let candidate = raw;
 
@@ -93,11 +91,9 @@ function preprocessData() {
 
     const lower = candidate.toLowerCase();
     for (const full of provinceNameSet) {
-      if (full.toLowerCase() === lower) {
-        return full;
-      }
+      if (full.toLowerCase() === lower) return full;
     }
-    // not a Canadian province in this boundary file
+    // not a province in this boundary file
     return null;
   }
 
@@ -108,9 +104,10 @@ function preprocessData() {
   });
 }
 
-// -------------------------
-// Controls
-// -------------------------
+
+// -------------------------------------------------------------------
+// 5) UI CONTROLS (DROPDOWNS & BUTTONS)
+// -------------------------------------------------------------------
 function initControls() {
   const genderSelect = d3.select("#genderSelect");
   genderSelect.selectAll("option")
@@ -120,36 +117,35 @@ function initControls() {
     .attr("value", d => d)
     .text(d => d);
 
-  // Metric Buttons (Case vs Loss)
+  // Metric buttons (cases vs loss)
   const btnCase = d3.select("#btnCase");
   const btnLoss = d3.select("#btnLoss");
 
-  // Helper to toggle visual states
   function updateMetricStyles() {
     if (selectedMetric === "cases") {
-      // Case Active (Green Solid)
+      // Case active (green solid)
       btnCase.style("background-color", greenColor)
         .style("border-color", greenColor)
-        .style("color", "white"); // Ensure text is white
+        .style("color", "white");
 
-      // Loss Inactive (Purple Outline)
+      // Loss inactive (purple outline)
       btnLoss.style("background-color", "transparent")
         .style("color", purpleColor)
         .style("border-color", purpleColor);
     } else {
-      // Case Inactive (Green Outline)
+      // Case inactive (green outline)
       btnCase.style("background-color", "transparent")
         .style("color", greenColor)
-        .style("border-color", greenColor); // Reset to bootstrap default
+        .style("border-color", greenColor);
 
-      // Loss Active (Purple Solid)
+      // Loss active (purple solid)
       btnLoss.style("background-color", purpleColor)
         .style("color", "white")
         .style("border-color", purpleColor);
     }
   }
 
-  // Click Handlers
+  // Metric button click handlers
   btnCase.on("click", () => {
     if (selectedMetric !== "cases") {
       selectedMetric = "cases";
@@ -166,30 +162,30 @@ function initControls() {
     }
   });
 
-  // Initialize styles on load
+  // Initialize metric button styles
   updateMetricStyles();
 
-  // Gender
+  // Gender dropdown
   genderSelect.on("change", function () {
     selectedGender = this.value;
     updateAll();
   });
 
-  // All years button (Trend Chart)
+  // "All years" button (trend chart)
   d3.select("#allYearsBtn").on("click", function () {
     selectedYear = null;
     d3.select(this).classed("active", true);
     updateAll();
   });
 
-  // Ages button (Donut Chart)
+  // "All ages" button (age donut)
   d3.select("#allAgesBtn").on("click", function () {
     selectedAge = "ALL";
     d3.select(this).classed("active", true);
     updateAll();
   });
 
-  //All Genders button (Donut Chart)
+  // "All genders" button (gender donut)
   d3.select("#allGendersBtn").on("click", function () {
     selectedGender = "ALL";
     d3.select(this).classed("active", true);
@@ -202,11 +198,12 @@ function updateYearLabel() {
   yearLabel.textContent = selectedYear == null ? "All years" : selectedYear;
 }
 
-// -------------------------
-// SVG and layout setup
-// -------------------------
+
+// -------------------------------------------------------------------
+// 6) SVG INITIALIZATION & LAYOUT
+// -------------------------------------------------------------------
 function initSVGs() {
-  // --- Map Setup ---
+  // --- Map setup ---
   const mapContainer = document.getElementById("mapContainer");
   mapWidth = mapContainer.clientWidth;
   mapHeight = mapContainer.clientHeight;
@@ -218,11 +215,10 @@ function initSVGs() {
   projection = d3.geoTransverseMercator()
     .rotate([96, 0])
     .fitSize([mapWidth, mapHeight], geojson);
+
   path = d3.geoPath().projection(projection);
 
-
-  // --- Trend Chart Setup ---
-  // Select the PARENT of the SVG to get the available space
+  // --- Trend chart setup ---
   const trendParent = document.getElementById("trendChart").parentElement;
   trendWidth = trendParent.clientWidth;
   trendHeight = trendParent.clientHeight;
@@ -231,7 +227,7 @@ function initSVGs() {
     .attr("width", trendWidth)
     .attr("height", trendHeight);
 
-  // --- Bar Chart Setup ---
+  // --- Bar chart setup ---
   const barParent = document.getElementById("barChart").parentElement;
   barWidth = barParent.clientWidth;
   barHeight = barParent.clientHeight;
@@ -240,8 +236,7 @@ function initSVGs() {
     .attr("width", barWidth)
     .attr("height", barHeight);
 
-
-  // --- Gender & Age Setup ---
+  // --- Gender & Age donut setup ---
   const genderParent = document.getElementById("genderChart").parentElement;
   const donutParent = document.getElementById("donutChart").parentElement;
 
@@ -251,7 +246,7 @@ function initSVGs() {
   donutWidth = donutParent.clientWidth;
   donutHeight = donutParent.clientHeight;
 
-  // Calculate Common Radius
+  // shared radius for both donuts
   const margin = 40;
   const possibleRadiusGender = Math.min(genderWidth, genderHeight) / 2 - margin;
   const possibleRadiusAge = Math.min(donutWidth, donutHeight) / 2 - margin;
@@ -260,7 +255,7 @@ function initSVGs() {
   genderRadius = commonRadius;
   donutRadius = commonRadius;
 
-  // Initialize Gender SVG
+  // Gender SVG
   genderSvg = d3.select("#genderChart")
     .attr("width", genderWidth)
     .attr("height", genderHeight);
@@ -268,7 +263,7 @@ function initSVGs() {
   genderG = genderSvg.append("g")
     .attr("transform", `translate(${genderWidth / 2},${genderHeight / 2})`);
 
-  // Initialize Age SVG
+  // Age SVG
   donutSvg = d3.select("#donutChart")
     .attr("width", donutWidth)
     .attr("height", donutHeight);
@@ -277,9 +272,10 @@ function initSVGs() {
     .attr("transform", `translate(${donutWidth / 2},${donutHeight / 2})`);
 }
 
-// -------------------------
-// Update pipeline
-// -------------------------
+
+// -------------------------------------------------------------------
+// 7) UPDATE PIPELINE (ENTRY POINT)
+// -------------------------------------------------------------------
 function updateAll() {
   updateMap();
   updateTrendChart();
@@ -288,14 +284,14 @@ function updateAll() {
   updateGenderChart();
 }
 
-// -------------------------
-// Data helpers
-// -------------------------
+
+// -------------------------------------------------------------------
+// 8) DATA HELPERS (FILTER & AGGREGATE)
+// -------------------------------------------------------------------
 function filteredMapByYearRows(filterYear) {
   // Only Canadian provinces (regionNormalized != null)
   return fraudData.mapByYear.filter(d => {
     if (!d.regionNormalized) return false;
-
     if (filterYear != null && d.year !== filterYear) return false;
     if (selectedGender !== "ALL" && d.gender !== selectedGender) return false;
     if (selectedAge !== "ALL" && d.ageRange !== selectedAge) return false;
@@ -329,9 +325,10 @@ function aggregateByProvince(filterYear) {
   return result;
 }
 
-// -------------------------
-// Map
-// -------------------------
+
+// -------------------------------------------------------------------
+// 9) MAP (CHOROPLETH + LEGEND + SUBTITLE)
+// -------------------------------------------------------------------
 function updateMap() {
   const provinceValues = aggregateByProvince(selectedYear);
   const maxVal = d3.max(provinceValues, d => d.value) || 0;
@@ -344,11 +341,11 @@ function updateMap() {
   const valueByProvince = new Map(
     provinceValues.map(d => [d.province, d.value])
   );
-  // console.log("Province values:", valueByProvince);
 
   const featureSelection = mapSvg.selectAll("path.map-province")
     .data(geojson.features, d => d.properties.PRUID);
 
+  // Draw/update provinces
   featureSelection.enter()
     .append("path")
     .attr("class", "map-province")
@@ -363,7 +360,6 @@ function updateMap() {
       const pname = d.properties.PRENAME;
       const v = valueByProvince.get(pname) || 0;
 
-      const yearText = selectedYear == null ? "All years" : selectedYear;
       const metricLabel = selectedMetric === "cases" ? "Cases" : "Loss";
 
       tooltip
@@ -379,6 +375,9 @@ function updateMap() {
       tooltip.style("display", "none");
     });
 
+  featureSelection.exit().remove();
+
+  // Province labels
   mapSvg.selectAll("text.region-label")
     .data(geojson.features)
     .enter()
@@ -392,7 +391,7 @@ function updateMap() {
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("font-size", "1em")
-    .style("font-weight","bold")
+    .style("font-weight", "bold")
     .style("fill", "#fff")
     .style("stroke", "#333")
     .style("stroke-width", "2px")
@@ -400,26 +399,24 @@ function updateMap() {
     .style("stroke-linejoin", "round")
     .style("pointer-events", "none");
 
-  featureSelection.exit().remove();
-
-  // Legend
+  // Legend labels
   d3.select("#legendLabel").text(
     selectedMetric === "cases" ? "Cases" : "Loss"
   );
   d3.select("#legendMin").text("0");
   d3.select("#legendMax").text(formatMetricValue(maxVal || 0, selectedMetric));
 
-  // Update legend gradient to match the color interpolator used on the map
-  const gradEl = d3.select('#mapLegendGradient');
+  // Legend gradient background
+  const gradEl = d3.select("#mapLegendGradient");
   if (maxVal === 0) {
-    gradEl.style('background', 'linear-gradient(to right, #e5e7eb, #e5e7eb)');
+    gradEl.style("background", "linear-gradient(to right, #e5e7eb, #e5e7eb)");
   } else {
     const stops = [0, 0.25, 0.5, 0.75, 1].map(t => interp(t));
-    const grad = `linear-gradient(to right, ${stops.join(',')})`;
-    gradEl.style('background', grad);
+    const grad = `linear-gradient(to right, ${stops.join(",")})`;
+    gradEl.style("background", grad);
   }
 
-  // Titles
+  // Subtitle: metric / filters
   const genderText = selectedGender === "ALL" ? "All genders" : `Gender: ${selectedGender}`;
   const ageText = selectedAge === "ALL" ? "All age ranges" : `Age: ${selectedAge}`;
   const yearText = selectedYear == null ? "All years" : `Year: ${selectedYear}`;
@@ -427,9 +424,10 @@ function updateMap() {
   d3.select("#mapSubtitle").text(`${yearText} · ${genderText} · ${ageText}`);
 }
 
-// -------------------------
-// Trend chart
-// -------------------------
+
+// -------------------------------------------------------------------
+// 10) TREND CHART (YEARLY CASES/LOSS)
+// -------------------------------------------------------------------
 function updateTrendChart() {
   trendSvg.selectAll("*").remove();
 
@@ -456,7 +454,8 @@ function updateTrendChart() {
     .range([innerHeight, 0]);
 
   const xAxis = d3.axisBottom(x).tickFormat(d3.format("d"));
-  const yAxis = d3.axisLeft(y).ticks(4)
+  const yAxis = d3.axisLeft(y)
+    .ticks(4)
     .tickFormat(v => formatMetricValue(v, selectedMetric));
 
   g.append("g")
@@ -510,9 +509,10 @@ function updateTrendChart() {
     });
 }
 
-// -------------------------
-// Bar chart (regions)
-// -------------------------
+
+// -------------------------------------------------------------------
+// 11) BAR CHART (TOP PROVINCES)
+// -------------------------------------------------------------------
 function updateBarChart() {
   barSvg.selectAll("*").remove();
 
@@ -582,17 +582,16 @@ function updateBarChart() {
     });
 
   bars.exit().remove();
-
-  const yearText = selectedYear == null ? "All years" : `Year ${selectedYear}`;
 }
 
-// -------------------------
-// Gender Chart
-// -------------------------
+
+// -------------------------------------------------------------------
+// 12) GENDER DONUT CHART
+// -------------------------------------------------------------------
 function updateGenderChart() {
   genderG.selectAll("*").remove();
 
-  // 1. Prepare Data
+  // 1) Filter data
   const rows = fraudData.mapByYear.filter(d => {
     if (!d.regionNormalized) return false;
     if (selectedYear != null && d.year !== selectedYear) return false;
@@ -608,21 +607,20 @@ function updateGenderChart() {
 
   const data = Array.from(grouped)
     .filter(d => d[0] !== "ALL")
-    .sort((a, b) => b[1] - a[1]); // Sort largest to smallest
+    .sort((a, b) => b[1] - a[1]);
 
   const total = d3.sum(data, d => d[1]);
 
-  // 2. Color Scale - MATCHED TO AGE CHART
+  // 2) Colors (match age chart)
   const color = d3.scaleOrdinal()
     .domain(data.map(d => d[0]))
     .range(d3.schemeSet3);
 
-  // 3. Compute Pie
+  // 3) Pie layout
   const pie = d3.pie().value(d => d[1]).sort(null);
   const data_ready = pie(data);
 
-  // 4. Arc Generators - MATCHED SIZES
-  // Ensure genderRadius is calculated similarly in initSVGs
+  // 4) Arcs
   const arc = d3.arc()
     .innerRadius(genderRadius * 0.5)
     .outerRadius(genderRadius * 0.8);
@@ -631,7 +629,7 @@ function updateGenderChart() {
     .innerRadius(genderRadius * 0.9)
     .outerRadius(genderRadius * 0.9);
 
-  // --- Label Positioning & Collision Detection ---
+  // 5) Label positions + basic collision resolution
   const textHeight = 14;
 
   const labels = data_ready.map(d => {
@@ -646,7 +644,6 @@ function updateGenderChart() {
     return { d, posA, posB, posC, isRight };
   });
 
-  // Simple collision detection
   function relax(group) {
     group.sort((a, b) => a.posC[1] - b.posC[1]);
     for (let i = 1; i < group.length; i++) {
@@ -662,19 +659,19 @@ function updateGenderChart() {
   const leftLabels = labels.filter(l => !l.isRight);
   relax(rightLabels);
   relax(leftLabels);
+
   const allLabels = [...rightLabels, ...leftLabels];
 
-  // 5. Draw Slices
-  genderG.selectAll('path')
+  // 6) Slices
+  genderG.selectAll("path")
     .data(data_ready)
     .enter()
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', d => color(d.data[0]))
+    .append("path")
+    .attr("d", arc)
+    .attr("fill", d => color(d.data[0]))
     .attr("stroke", d => d.data[0] === selectedGender ? "white" : "none")
     .style("stroke-width", "2px")
     .style("cursor", "pointer")
-    // MATCHED OPACITY (0.7 default)
     .attr("opacity", d => {
       if (selectedGender === "ALL") return 0.7;
       return d.data[0] === selectedGender ? 1.0 : 0.3;
@@ -707,11 +704,11 @@ function updateGenderChart() {
       tooltip.style("display", "none");
     });
 
-  // 6. Draw Polylines
-  genderG.selectAll('polyline')
+  // 7) Polylines
+  genderG.selectAll("polyline")
     .data(allLabels)
     .enter()
-    .append('polyline')
+    .append("polyline")
     .attr("stroke", "white")
     .style("fill", "none")
     .attr("stroke-width", 1)
@@ -719,25 +716,24 @@ function updateGenderChart() {
       if (selectedGender === "ALL") return 1;
       return l.d.data[0] === selectedGender ? 1 : 0.2;
     })
-    .attr('points', l => [l.posA, l.posB, l.posC]);
+    .attr("points", l => [l.posA, l.posB, l.posC]);
 
-  // 7. Draw Labels
-  genderG.selectAll('text')
+  // 8) Labels
+  genderG.selectAll("text")
     .data(allLabels)
     .enter()
-    .append('text')
+    .append("text")
     .text(l => l.d.data[0])
-    .attr('transform', l => `translate(${l.posC})`)
-    .style('text-anchor', l => l.isRight ? 'start' : 'end')
+    .attr("transform", l => `translate(${l.posC})`)
+    .style("text-anchor", l => l.isRight ? "start" : "end")
     .style("font-size", "0.8em")
     .style("fill", "white")
     .style("opacity", l => {
       if (selectedGender === "ALL") return 1;
       return l.d.data[0] === selectedGender ? 1 : 0.2;
     })
-    // --- NEW: Add Tooltip interaction to Labels ---
     .on("mousemove", (event, l) => {
-      const d = l.d; // Access the data from the label object
+      const d = l.d;
       const percent = total > 0 ? (d.data[1] / total * 100).toFixed(1) + "%" : "0%";
 
       tooltip
@@ -755,14 +751,14 @@ function updateGenderChart() {
     });
 }
 
-// -------------------------
-// Age Chart
-// -------------------------
+
+// -------------------------------------------------------------------
+// 13) AGE DONUT CHART
+// -------------------------------------------------------------------
 function updateAgeChart() {
-  // 1. Clear previous
   donutG.selectAll("*").remove();
 
-  // 2. Prepare Data
+  // 1) Filter data
   const rows = fraudData.mapByYear.filter(d => {
     if (!d.regionNormalized) return false;
     if (selectedYear != null && d.year !== selectedYear) return false;
@@ -782,19 +778,19 @@ function updateAgeChart() {
 
   const total = d3.sum(data, d => d[1]);
 
-  // 3. Colors - MATCHED TO GENDER CHART
+  // 2) Colors (match gender chart)
   const color = d3.scaleOrdinal()
     .domain(data.map(d => d[0]))
     .range(d3.schemeSet3);
 
-  // 4. Compute Pie
+  // 3) Pie layout
   const pie = d3.pie()
     .sort(null)
     .value(d => d[1]);
 
   const data_ready = pie(data);
 
-  // 5. Arc Generators
+  // 4) Arcs
   const arc = d3.arc()
     .innerRadius(donutRadius * 0.5)
     .outerRadius(donutRadius * 0.8);
@@ -803,7 +799,7 @@ function updateAgeChart() {
     .innerRadius(donutRadius * 0.9)
     .outerRadius(donutRadius * 0.9);
 
-  // --- Calculate Positions & Fix Overlap ---
+  // 5) Label positions + basic collision resolution
   const textHeight = 14;
 
   const labels = data_ready.map(d => {
@@ -816,13 +812,7 @@ function updateAgeChart() {
 
     posC[0] = donutRadius * 0.99 * (isRight ? 1 : -1);
 
-    return {
-      d: d,
-      posA: posA,
-      posB: posB,
-      posC: posC,
-      isRight: isRight
-    };
+    return { d, posA, posB, posC, isRight };
   });
 
   function relax(group) {
@@ -838,21 +828,20 @@ function updateAgeChart() {
 
   const rightLabels = labels.filter(l => l.isRight);
   const leftLabels = labels.filter(l => !l.isRight);
-
   relax(rightLabels);
   relax(leftLabels);
 
   const allLabels = [...rightLabels, ...leftLabels];
 
-  // 6. Draw Slices
-  donutG.selectAll('allSlices')
+  // 6) Slices
+  donutG.selectAll("allSlices")
     .data(data_ready)
     .enter()
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', d => color(d.data[0]))
+    .append("path")
+    .attr("d", arc)
+    .attr("fill", d => color(d.data[0]))
     .attr("opacity", d => {
-      if (selectedAge === "ALL") return 0.7; // MATCHED OPACITY
+      if (selectedAge === "ALL") return 0.7;
       return d.data[0] === selectedAge ? 1.0 : 0.3;
     })
     .attr("stroke", d => d.data[0] === selectedAge ? "white" : "none")
@@ -887,39 +876,36 @@ function updateAgeChart() {
       tooltip.style("display", "none");
     });
 
-  // 7. Draw Polylines
-  donutG.selectAll('allPolylines')
+  // 7) Polylines
+  donutG.selectAll("allPolylines")
     .data(allLabels)
     .enter()
-    .append('polyline')
+    .append("polyline")
     .attr("stroke", "white")
     .style("fill", "none")
     .attr("stroke-width", 1)
-    .attr("opacity", d => {
+    .attr("opacity", l => {
       if (selectedAge === "ALL") return 1;
-      return d.d.data[0] === selectedAge ? 1 : 0.2;
+      return l.d.data[0] === selectedAge ? 1 : 0.2;
     })
-    .attr('points', function (l) {
-      return [l.posA, l.posB, l.posC];
-    });
+    .attr("points", l => [l.posA, l.posB, l.posC]);
 
-  // 8. Draw Labels
-  donutG.selectAll('allLabels')
+  // 8) Labels
+  donutG.selectAll("allLabels")
     .data(allLabels)
     .enter()
-    .append('text')
+    .append("text")
     .text(l => l.d.data[0])
-    .attr('transform', l => `translate(${l.posC})`)
-    .style('text-anchor', l => l.isRight ? 'start' : 'end')
-    .style('font-size', '0.8em')
+    .attr("transform", l => `translate(${l.posC})`)
+    .style("text-anchor", l => l.isRight ? "start" : "end")
+    .style("font-size", "0.8em")
     .style("fill", "white")
     .style("opacity", l => {
       if (selectedAge === "ALL") return 1;
       return l.d.data[0] === selectedAge ? 1 : 0.2;
     })
-    // --- NEW: Add Tooltip interaction to Labels ---
     .on("mousemove", (event, l) => {
-      const d = l.d; // Access the data from the label object
+      const d = l.d;
       const percent = total > 0 ? (d.data[1] / total * 100).toFixed(1) + "%" : "0%";
 
       tooltip
@@ -937,38 +923,31 @@ function updateAgeChart() {
     });
 }
 
-// -------------------------
-// Resize Handling
-// -------------------------
+
+// -------------------------------------------------------------------
+// 14) WINDOW RESIZE HANDLING (REDRAW ALL)
+// -------------------------------------------------------------------
 window.addEventListener("resize", () => {
-  // 1. Re-measure Map
+  // Map
   const mapContainer = document.getElementById("mapContainer");
   mapWidth = mapContainer.clientWidth;
   mapHeight = mapContainer.clientHeight;
-
   mapSvg.attr("width", mapWidth).attr("height", mapHeight);
-
-  // Re-fit projection to new size
   projection.fitSize([mapWidth, mapHeight], geojson);
 
-  // 2. Re-measure Trend
-  const trendContainer = document.getElementById("trendChartContainer");
-  // We subtract a bit for internal padding if necessary, or just use clientHeight of the flex container
-  // Note: Since we moved the title/button out of the SVG area in HTML, 
-  // we target the div wrapping the svg, OR just use the container - header height.
-  // The easiest way with the new HTML layout is to measure the parent of the SVG.
+  // Trend
   const trendParent = trendSvg.node().parentElement;
   trendWidth = trendParent.clientWidth;
   trendHeight = trendParent.clientHeight;
   trendSvg.attr("width", trendWidth).attr("height", trendHeight);
 
-  // 3. Re-measure Bar
+  // Bar
   const barParent = barSvg.node().parentElement;
   barWidth = barParent.clientWidth;
   barHeight = barParent.clientHeight;
   barSvg.attr("width", barWidth).attr("height", barHeight);
 
-  // 4. Re-measure Gender & Age (Recalculate Radius)
+  // Gender & Age donuts (recompute radius)
   const genderParent = genderSvg.node().parentElement;
   const donutParent = donutSvg.node().parentElement;
 
@@ -978,7 +957,6 @@ window.addEventListener("resize", () => {
   donutWidth = donutParent.clientWidth;
   donutHeight = donutParent.clientHeight;
 
-  // Recalculate common radius
   const margin = 40;
   const possibleRadiusGender = Math.min(genderWidth, genderHeight) / 2 - margin;
   const possibleRadiusAge = Math.min(donutWidth, donutHeight) / 2 - margin;
@@ -987,13 +965,12 @@ window.addEventListener("resize", () => {
   genderRadius = commonRadius;
   donutRadius = commonRadius;
 
-  // Update SVG dims and Group positions
   genderSvg.attr("width", genderWidth).attr("height", genderHeight);
   genderG.attr("transform", `translate(${genderWidth / 2},${genderHeight / 2})`);
 
   donutSvg.attr("width", donutWidth).attr("height", donutHeight);
   donutG.attr("transform", `translate(${donutWidth / 2},${donutHeight / 2})`);
 
-  // 5. Redraw everything
+  // Redraw everything with new geometry
   updateAll();
 });

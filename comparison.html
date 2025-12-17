@@ -2,21 +2,30 @@
 <html lang="en">
 
 <head>
+  <!-- Basic document metadata -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Page title (browser tab + assistive tech) -->
   <title>Canada Fraud Watch - Side-by-Side</title>
+
+  <!-- Favicon for browser tab -->
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap CSS (layout and components) -->
   <link rel="stylesheet" href="./lib/bootstrap.min.css" />
 
-  <!-- Your custom CSS -->
+  <!-- Shared site-wide styles -->
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Page-specific styles for side-by-side comparison view -->
   <link rel="stylesheet" href="css/comparison.css" />
 
+  <!-- Google Fonts preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Project fonts: Exo 2 + Josefin Slab -->
   <link
     href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap"
     rel="stylesheet">
@@ -24,112 +33,162 @@
 </head>
 
 <body>
-  <!-- Navbar (same as your other pages) -->
+  <!-- Global navigation bar (consistent across pages) -->
   <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
     <div class="container-fluid">
+      <!-- Brand / home link -->
       <a class="navbar-brand fw-bold text-light" href="index.html">
         <img src="/img/favicon.ico" width="35" height="35" class="d-inline-block align-top" alt="icon">
         Canada Fraud Watch
       </a>
+
+      <!-- Mobile nav toggle for small screens -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
         aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
+      <!-- Nav links aligned to the right on larger screens -->
       <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
         <ul class="navbar-nav mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link text-light" href="index.html">Personal Risk</a></li>
-          <li class="nav-item"><a class="nav-link text-light" href="overview.html">The Big Picture</a></li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="index.html">Personal Risk</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="overview.html">The Big Picture</a>
+          </li>
+          <!-- Current page is visually marked as active -->
           <li class="nav-item">
             <a class="nav-link active text-white bg-success rounded px-3" aria-current="page"
               href="comparison.html">Side-by-Side</a>
           </li>
-          <li class="nav-item"><a class="nav-link text-light" href="info.html">Learn About Fraud</a></li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="info.html">Learn About Fraud</a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Main content -->
+  <!-- Page-level heading and intro -->
   <div id="controls">
-    <h2 class="col-12 text-center my-2">Compare Two Provinces Side‑by‑Side</h2>
+    <h2 class="col-12 text-center my-2">Compare Two Provinces Side-by-Side</h2>
   </div>
 
-  <!-- Side-by-side layout: map and controls on left, charts on right -->
+  <!-- Main layout: map + controls + province-specific charts -->
   <div class="container-fluid mt-3">
     <div class="row">
       <div class="col-10 mx-auto">
-        <!-- MAP -->
+        <!-- Main choropleth / locator map (single map used to highlight both provinces) -->
         <div class="map-container mb-3">
+          <!-- D3 renders the national map into this SVG -->
           <svg id="map1"></svg>
+          <!-- Legend (color ramp / labels) for the current metric and year selection -->
           <div id="legend1" class="map-legend"></div>
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-10 mx-auto">
-        <!-- SUMMARY counters below the map -->
+        <!-- Summary counters for currently selected provinces + year/metric
+             (e.g., total cases, total loss, per capita values) -->
         <div class="d-flex justify-content-between align-items-center mb-2" id="summary1" style="font-weight: 600;">
         </div>
 
-        <!-- CONTROLS below the map -->
+        <!-- Province + metric + time controls below the map -->
         <div class="map-controls">
           <div class="row">
+            <!-- Province / territory selector for the left-side charts -->
             <div class="col">
               <div class="mb-2">
                 <label for="provinceSelect1" class="form-label">Province / Territory 1</label>
+                <!-- Options populated dynamically in comparison.js -->
                 <select id="provinceSelect1" class="form-select"></select>
               </div>
             </div>
+
+            <!-- Province / territory selector for the right-side charts -->
             <div class="col">
               <div class="mb-2">
                 <label for="provinceSelect2" class="form-label">Province / Territory 2</label>
+                <!-- Options populated dynamically in comparison.js -->
                 <select id="provinceSelect2" class="form-select"></select>
               </div>
             </div>
           </div>
+
+          <!-- Metric and year controls -->
           <div class="d-flex flex-wrap align-items-center gap-4">
+            <!-- Metric toggle: cases vs loss -->
             <div class="d-flex align-items-center gap-2">
               <label class="form-label mb-0">Metric</label>
               <div class="btn-group" role="group">
+                <!-- Radio buttons styled as toggle buttons (Bootstrap .btn-check pattern) -->
                 <input type="radio" class="btn-check" name="metricRadio" id="metricCases" value="cases"
                   autocomplete="off" checked>
                 <label class="btn btn-outline-primary" for="metricCases">Cases</label>
+
                 <input type="radio" class="btn-check" name="metricRadio" id="metricLoss" value="loss"
                   autocomplete="off">
                 <label class="btn btn-outline-primary" for="metricLoss">Loss ($)</label>
               </div>
             </div>
+
+            <!-- Year slider and "All Years" toggle -->
             <div class="year-controls d-flex align-items-center gap-2">
               <label for="yearSlider" class="mb-0">Year:</label>
+              <!-- Year range slider (filtered in comparison.js) -->
               <input type="range" id="yearSlider" min="2021" max="2025" step="1" value="2025" />
+              <!-- Label showing current slider year -->
               <span id="yearLabel">2025</span>
+              <!-- Button to reset to aggregated "All Years" view -->
               <button id="allYearsBtn">All Years</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- CHARTS: side-by-side province chart sections (on the right)-->
+      <!-- Province-specific charts: left = Province 1, right = Province 2 -->
       <div class="col-10 mx-auto mt-4">
         <div class="charts-wrapper">
           <div class="row">
+            <!-- Charts for Province / Territory 1 -->
             <div class="col-6">
               <div id="charts-province1" class="province-chart-set mb-4">
+                <!-- Province name / label inserted by JS -->
                 <h3 id="charts-title1"></h3>
+
+                <!-- Fraud category distribution (e.g., donuts or bars) -->
                 <div id="catChart1" class="chart"></div>
+
+                <!-- Method of contact distribution (phone, text, email, etc.) -->
                 <div id="methodChart1" class="chart"></div>
+
+                <!-- Age group distribution for this province -->
                 <div id="ageChart1" class="chart"></div>
+
+                <!-- Month / seasonal pattern chart -->
                 <div id="monthChart1" class="chart"></div>
               </div>
             </div>
 
+            <!-- Charts for Province / Territory 2 -->
             <div class="col-6">
               <div id="charts-province2" class="province-chart-set">
+                <!-- Province name / label inserted by JS -->
                 <h3 id="charts-title2"></h3>
+
+                <!-- Fraud category distribution -->
                 <div id="catChart2" class="chart"></div>
+
+                <!-- Method of contact distribution -->
                 <div id="methodChart2" class="chart"></div>
+
+                <!-- Age group distribution -->
                 <div id="ageChart2" class="chart"></div>
+
+                <!-- Month / seasonal pattern chart -->
                 <div id="monthChart2" class="chart"></div>
               </div>
             </div>
@@ -139,9 +198,11 @@
     </div>
   </div>
 
+  <!-- Shared tooltip for map and charts (content + position controlled in JS) -->
   <footer class="mt-5 pt-4 pb-3 bg-dark text-light">
     <div class="col-10 mx-auto">
       <div class="row small">
+        <!-- Project credits -->
         <div class="col-12 col-md-4 mb-3 mb-md-0">
           <h6 class="text-uppercase fw-bold mb-1">Credits</h6>
           <p class="mb-0">
@@ -150,6 +211,7 @@
           </p>
         </div>
 
+        <!-- Data sources with links to open data portals -->
         <div class="col-12 col-md-4 mb-3 mb-md-0">
           <h6 class="text-uppercase fw-bold mb-1">Data sources</h6>
           <p class="mb-0">
@@ -160,6 +222,7 @@
           </p>
         </div>
 
+        <!-- Methodological notes / caveats -->
         <div class="col-12 col-md-4">
           <h6 class="text-uppercase fw-bold mb-1">Notes</h6>
           <p class="mb-0">
@@ -171,13 +234,18 @@
     </div>
   </footer>
 
+  <!-- Script includes (loaded at end of body for performance) -->
 
-
-  <!-- D3 -->
+  <!-- D3 (used to render maps and charts) -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Bootstrap JS (for navbar collapse) -->
+
+  <!-- Bootstrap JS (navbar collapse and other components) -->
   <script src="./lib/bootstrap.min.js"></script>
-  <!-- Your custom JS -->
+
+  <!-- Page-specific logic for comparison view:
+       - load data
+       - wire controls (provinces, metric, year)
+       - draw map and province charts -->
   <script src="js/comparison.js"></script>
 </body>
 

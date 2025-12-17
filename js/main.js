@@ -13,6 +13,10 @@ const purpleColor = "#7570b3";
 let data = [];
 let genderSelect, ageSelect, regionSelect;
 
+let dateStartInput, dateEndInput;
+let defaultMaxDate = null;
+let defaultOneYearAgo = null;
+
 // Canadian provinces + territories
 const VALID_REGIONS = new Set([
   "Alberta",
@@ -30,17 +34,13 @@ const VALID_REGIONS = new Set([
   "Yukon",
 ]);
 
-let dateStartInput, dateEndInput;
-let defaultMaxDate = null;
-let defaultOneYearAgo = null;
-
-// MINI MAP ---------------------------------
+// MINI MAP globals
 let canadaGeoJson = null;
 let mapPathGenerator;
 let mapSvg;
 
-// PIE CHART --------------------------------
-const PIE_VIEWBOX_SIZE = 400; 
+// PIE CHART globals
+const PIE_VIEWBOX_SIZE = 400;
 const PIE_RADIUS = PIE_VIEWBOX_SIZE / 2 - 100;
 
 // inner radius for circular barplot
@@ -49,15 +49,10 @@ const CIRC_INNER_RADIUS = 50;
 const pie = d3.pie().value(d => d.value);
 const arc = d3.arc().innerRadius(0).outerRadius(PIE_RADIUS);
 
-// Select the SVG groups
-// const pieComplaintG = d3.select("#pie-complaint")
-//   .append("g")
-//   .attr("transform", `translate(${PIE_SIZE / 2},${PIE_SIZE / 2})`);
-
 const pieCategoryG = setupResponsivePie("#pie-category");
 const pieMethodG = setupResponsivePie("#pie-method");
 
-// LINE CHART --------------------------------
+// LINE CHART globals
 const TREND_WIDTH = 700;
 const TREND_HEIGHT = 300;
 
@@ -77,7 +72,8 @@ const trendG = svgTrend.append("g")
   .attr("transform", `translate(${trendMargin.left},${trendMargin.top})`);
 
 // Axes groups
-const xAxisG = trendG.append("g").attr("class", "x-axis")
+const xAxisG = trendG.append("g")
+  .attr("class", "x-axis")
   .attr("transform", `translate(0,${trendInnerHeight})`);
 
 const yAxisLeftG = trendG.append("g").attr("class", "y-axis-left");
@@ -96,7 +92,7 @@ const lossPath = trendG.append("path")
 
 
 // -------------------------------------------------------------------
-// 3) Load ALL Data Promises
+// 3) LOAD ALL DATA (PROMISES)
 // -------------------------------------------------------------------
 Promise.all([
   d3.json(DATA_FILE),
@@ -134,15 +130,18 @@ Promise.all([
   d3.select("#summary-text").text("Error loading data. Check console.");
 });
 
+
 // -------------------------------------------------------------------
+// 4) CONTROLS & FILTER HELPERS
+// -------------------------------------------------------------------
+
 // Initialize the dropdown controls
-// -------------------------------------------------------------------
 function initControls() {
   genderSelect = d3.select("#genderSelect");
   ageSelect = d3.select("#ageSelect");
   regionSelect = d3.select("#regionSelect");
 
-  //date range inputs
+  // date range inputs
   dateStartInput = d3.select("#dateStart");
   dateEndInput = d3.select("#dateEnd");
 
@@ -164,7 +163,7 @@ function initControls() {
   dateStartInput.on("change", updateControls);
   dateEndInput.on("change", updateControls);
 
-  // map metric selector (cases | loss)
+  // map metric selector (cases | loss) – duplicate handler retained for now
   mapMetricSelect = d3.select("#mapMetricSelect");
   mapMetricSelect.on("change", () => {
     mapMetric = mapMetricSelect.node().value;
@@ -173,12 +172,13 @@ function initControls() {
 
   const genders = Array.from(new Set(data.map(d => d.gender))).filter(Boolean).sort();
   const ages = Array.from(new Set(data.map(d => d.ageRange))).filter(Boolean).sort();
-  // const regions = Array.from(new Set(data.map(d => d.region))).filter(Boolean).sort();
+
+  // Regions: keep only valid Canadian regions
   const regions = Array.from(
     new Set(
       data
         .map(d => (d.region || "").trim())
-        .filter(r => r && VALID_REGIONS.has(r))   // keep only valid Canadian regions
+        .filter(r => r && VALID_REGIONS.has(r))
     )
   ).sort();
 
@@ -200,15 +200,13 @@ function initControls() {
   ageSelect.on("change", updateControls);
   regionSelect.on("change", updateControls);
 
-  // Optional: set a default, e.g. Ontario + 40-49 + Male:
+  // Optional defaults:
   // genderSelect.property("value", "Male");
   // ageSelect.property("value", "40-49");
   // regionSelect.property("value", "Ontario");
 }
 
-// -------------------------------------------------------------------
 // Helper: read current filters
-// -------------------------------------------------------------------
 function getFilters() {
   return {
     gender: genderSelect ? genderSelect.node().value : "all",
@@ -217,22 +215,20 @@ function getFilters() {
   };
 }
 
+// Setup a responsive pie SVG and return centered <g>
 function setupResponsivePie(selectorId) {
   return d3.select(selectorId)
-    // "viewBox" defines the internal coordinate system (0 0 600 600)
     .attr("viewBox", `0 0 ${PIE_VIEWBOX_SIZE} ${PIE_VIEWBOX_SIZE}`)
-    // "preserveAspectRatio" ensures it doesn't stretch/distort
     .attr("preserveAspectRatio", "xMidYMid meet")
-    // CSS to make it fit the container
     .style("width", "auto")
     .style("height", "80%")
     .append("g")
-    // Move (0,0) to the center of the box
     .attr("transform", `translate(${PIE_VIEWBOX_SIZE / 2},${PIE_VIEWBOX_SIZE / 2})`);
 }
 
+
 // -------------------------------------------------------------------
-// MINI MAP
+// 5) MINI MAP (INIT + UPDATE)
 // -------------------------------------------------------------------
 function initMap() {
   // 1. Get dimensions
@@ -249,15 +245,14 @@ function initMap() {
 
   // 3. Define Projection with fitSize
   const projection = d3.geoTransverseMercator()
-    .rotate([96, 0])  // Keep the rotation to orient Canada upright
+    .rotate([96, 0])  // orient Canada upright
     .fitSize([width, height], canadaGeoJson);
 
   mapPathGenerator = d3.geoPath().projection(projection);
 
-  // 4. Draw Map Paths (Clear existing first if re-initializing)
-  mapSvg.selectAll("*").remove(); 
+  // 4. Clear & draw map paths
+  mapSvg.selectAll("*").remove();
 
-  // Draw Polygons
   mapSvg.selectAll("path")
     .data(canadaGeoJson.features)
     .enter()
@@ -265,18 +260,18 @@ function initMap() {
     .attr("d", mapPathGenerator)
     .attr("stroke", "#454545")
     .attr("stroke-width", 0.5)
-    .attr("fill", "#555"); // Set a default fill so it's visible immediately
+    .attr("fill", "#555");
 
-  // 5. Add Labels
+  // 5. Province abbreviations
   mapSvg.selectAll("text.region-label")
     .data(canadaGeoJson.features)
     .enter()
     .append("text")
     .attr("class", "region-label")
-    .text(d => d.properties.PREABBR) 
+    .text(d => d.properties.PREABBR)
     .attr("transform", d => {
-        const [x, y] = mapPathGenerator.centroid(d);
-        return `translate(${x}, ${y})`;
+      const [x, y] = mapPathGenerator.centroid(d);
+      return `translate(${x}, ${y})`;
     })
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
@@ -289,10 +284,10 @@ function initMap() {
 function updateMap() {
   if (!canadaGeoJson) return;
 
-  const filters = getFilters(); 
-  const selectedRegion = filters.region; 
+  const filters = getFilters();
+  const selectedRegion = filters.region;
 
-  const baseColor = "#555"; 
+  const baseColor = "#555";
 
   mapSvg.selectAll("path")
     .transition().duration(200)
@@ -308,15 +303,16 @@ function updateMap() {
       }
 
       if (selectedRegion === "all") {
-        return greenColor; 
+        return greenColor;
       } else {
         return featureName === selectedRegion ? greenColor : baseColor;
       }
     });
 }
 
+
 // -------------------------------------------------------------------
-// Update a pie chart given filtered data and an accessor function
+// 6) PIE CHARTS (CIRCULAR BAR PLOT)
 // -------------------------------------------------------------------
 function updatePieChart(svgGroup, filteredData, accessor) {
   if (!filteredData.length) {
@@ -357,7 +353,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
   const fmtInt = d3.format(",d");
   const fmtPct = d3.format(".1%");
 
-  // 3) BARS (circular)
+  // 3) Bars (circular)
   const bars = svgGroup.selectAll("path.circular-bar")
     .data(dataForChart, d => d.key);
 
@@ -391,7 +387,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
 
   bars.exit().remove();
 
-  // 4) LABEL GROUPS
+  // 4) Label groups
   const labelGroups = svgGroup.selectAll("g.circular-label")
     .data(dataForChart, d => d.key);
 
@@ -410,7 +406,6 @@ function updatePieChart(svgGroup, filteredData, accessor) {
       const rotate = angle * 180 / Math.PI - 90;
       return `rotate(${rotate})translate(${r},0)`;
     })
-    // Tooltip on the whole label group
     .on("mousemove", (event, d) => {
       const pct = total ? d.value / total : 0;
       tooltip.html(
@@ -426,7 +421,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
       tooltip.style("display", "none");
     });
 
-  // 5) LABEL TEXT (white)
+  // 5) Label text (white)
   const labels = labelEnter.merge(labelGroups).selectAll("text")
     .data(d => [d]);
 
@@ -435,7 +430,7 @@ function updatePieChart(svgGroup, filteredData, accessor) {
     .merge(labels)
     .text(d => d.key)
     .style("font-size", "0.7em")
-    .style("fill", "#ffffff")              // white labels
+    .style("fill", "#ffffff")
     .attr("alignment-baseline", "middle")
     .attr("transform", d => {
       const angle = x(d.key) + x.bandwidth() / 2;
@@ -448,8 +443,9 @@ function updatePieChart(svgGroup, filteredData, accessor) {
   labelGroups.exit().remove();
 }
 
+
 // -------------------------------------------------------------------
-// Update the trend chart based on demographic filters
+// 7) TREND CHART (CASES & LOSS OVER TIME)
 // -------------------------------------------------------------------
 function updateTrendChart(demoFiltered) {
   // If no data, clear chart
@@ -459,11 +455,9 @@ function updateTrendChart(demoFiltered) {
     xAxisG.selectAll("*").remove();
     yAxisLeftG.selectAll("*").remove();
     yAxisRightG.selectAll("*").remove();
-    trendG.select(".chart-legend").remove(); // Clear legend
+    trendG.select(".chart-legend").remove();
     return;
   }
-
-  // --- 1. Colors Configuration ---
 
   // Aggregate by year
   const yearly = Array.from(
@@ -517,20 +511,20 @@ function updateTrendChart(demoFiltered) {
     .attr("fill", "none")
     .attr("stroke-width", 2);
 
-  // --- 2. Axes with Color Alignment ---
+  // Axes
   const xAxis = d3.axisBottom(x).ticks(yearly.length).tickFormat(d3.format("d"));
   const yAxisLeft = d3.axisLeft(yCases).ticks(4);
   const yAxisRight = d3.axisRight(yLoss).ticks(4);
 
   xAxisG.call(xAxis);
 
-  // Left Axis (Cases - Green)
+  // Left axis (cases - green)
   yAxisLeftG.call(yAxisLeft)
-    .call(g => g.selectAll("text").attr("fill", greenColor)) // Color the text
-    .call(g => g.selectAll("line").attr("stroke", greenColor)) // Color the ticks
-    .call(g => g.select(".domain").attr("stroke", greenColor)); // Color the main axis line
+    .call(g => g.selectAll("text").attr("fill", greenColor))
+    .call(g => g.selectAll("line").attr("stroke", greenColor))
+    .call(g => g.select(".domain").attr("stroke", greenColor));
 
-  // Right Axis (Loss - Purple)
+  // Right axis (loss - purple)
   yAxisRightG
     .attr("transform", `translate(${trendInnerWidth},0)`)
     .call(yAxisRight)
@@ -538,38 +532,55 @@ function updateTrendChart(demoFiltered) {
     .call(g => g.selectAll("line").attr("stroke", purpleColor))
     .call(g => g.select(".domain").attr("stroke", purpleColor));
 
-
-  // --- 3. Adding a Legend ---
-  // Remove existing legend to prevent duplicates on update
+  // Legend (remove old, add new)
   trendG.select(".chart-legend").remove();
 
   const legend = trendG.append("g")
     .attr("class", "chart-legend")
-    .attr("transform", "translate(-50, -15)"); // Position top-left (adjust as needed)
+    .attr("transform", "translate(-50, -15)");
 
-  // Legend Item 1: Cases
-  legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).style("fill", greenColor);
-  legend.append("text").attr("x", 10).attr("y", 4).text("Cases").style("font-size", "0.8em").attr("alignment-baseline", "middle").style("fill", greenColor);
+  legend.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 5)
+    .style("fill", greenColor);
 
-  // Legend Item 2: Loss
-  legend.append("circle").attr("cx", 60).attr("cy", 0).attr("r", 5).style("fill", purpleColor);
-  legend.append("text").attr("x", 70).attr("y", 4).text("Loss($)").style("font-size", "0.8em").attr("alignment-baseline", "middle").style("fill", purpleColor);
+  legend.append("text")
+    .attr("x", 10)
+    .attr("y", 4)
+    .text("Cases")
+    .style("font-size", "0.8em")
+    .attr("alignment-baseline", "middle")
+    .style("fill", greenColor);
 
+  legend.append("circle")
+    .attr("cx", 60)
+    .attr("cy", 0)
+    .attr("r", 5)
+    .style("fill", purpleColor);
 
-  // --- 4. Tooltip & Interactions ---
-  const overlay = trendG.selectAll('.trend-overlay').data([null]);
+  legend.append("text")
+    .attr("x", 70)
+    .attr("y", 4)
+    .text("Loss($)")
+    .style("font-size", "0.8em")
+    .attr("alignment-baseline", "middle")
+    .style("fill", purpleColor);
+
+  // Tooltip & interactions overlay
+  const overlay = trendG.selectAll(".trend-overlay").data([null]);
 
   overlay.enter()
-    .append('rect')
-    .attr('class', 'trend-overlay')
-    .attr('fill', 'transparent')
-    .style('pointer-events', 'all')
+    .append("rect")
+    .attr("class", "trend-overlay")
+    .attr("fill", "transparent")
+    .style("pointer-events", "all")
     .merge(overlay)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('width', trendInnerWidth)
-    .attr('height', trendInnerHeight)
-    .on('mousemove', function (event) {
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", trendInnerWidth)
+    .attr("height", trendInnerHeight)
+    .on("mousemove", function (event) {
       if (!yearly || !yearly.length) return;
 
       const [mx] = d3.pointer(event, this);
@@ -588,72 +599,73 @@ function updateTrendChart(demoFiltered) {
 
       const xPos = x(nearest.year);
 
-      // Show hover vertical dashed line
-      const hoverLine = trendG.selectAll('.trend-hover-line').data([null]);
-      hoverLine.enter().append('line').attr('class', 'trend-hover-line')
+      // Hover vertical line
+      const hoverLine = trendG.selectAll(".trend-hover-line").data([null]);
+      hoverLine.enter().append("line").attr("class", "trend-hover-line")
         .merge(hoverLine)
-        .attr('x1', xPos).attr('x2', xPos)
-        .attr('y1', 0).attr('y2', trendInnerHeight)
-        .attr('stroke', '#6b7280')
-        .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '4,4')
-        .style('opacity', 0.9);
+        .attr("x1", xPos).attr("x2", xPos)
+        .attr("y1", 0).attr("y2", trendInnerHeight)
+        .attr("stroke", "#6b7280")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "4,4")
+        .style("opacity", 0.9);
 
-      // Show hover points
-      const hoverPointCases = trendG.selectAll('.trend-hover-point-cases').data([nearest]);
-      hoverPointCases.enter().append('circle').attr('class', 'trend-hover-point-cases')
-        .attr('r', 5)
+      // Hover points
+      const hoverPointCases = trendG.selectAll(".trend-hover-point-cases").data([nearest]);
+      hoverPointCases.enter().append("circle").attr("class", "trend-hover-point-cases")
+        .attr("r", 5)
         .merge(hoverPointCases)
-        .attr('cx', xPos)
-        .attr('cy', d => yCases(d.cases))
-        .attr('fill', greenColor) // Using variable
-        .attr('stroke', '#fff')
-        .attr('stroke-width', 1)
-        .style('pointer-events', 'none');
+        .attr("cx", xPos)
+        .attr("cy", d => yCases(d.cases))
+        .attr("fill", greenColor)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1)
+        .style("pointer-events", "none");
 
-      const hoverPointLoss = trendG.selectAll('.trend-hover-point-loss').data([nearest]);
-      hoverPointLoss.enter().append('circle').attr('class', 'trend-hover-point-loss')
-        .attr('r', 5)
+      const hoverPointLoss = trendG.selectAll(".trend-hover-point-loss").data([nearest]);
+      hoverPointLoss.enter().append("circle").attr("class", "trend-hover-point-loss")
+        .attr("r", 5)
         .merge(hoverPointLoss)
-        .attr('cx', xPos)
-        .attr('cy', d => yLoss(d.loss))
-        .attr('fill', purpleColor) // Using variable
-        .attr('stroke', '#fff')
-        .attr('stroke-width', 1)
-        .style('pointer-events', 'none');
+        .attr("cx", xPos)
+        .attr("cy", d => yLoss(d.loss))
+        .attr("fill", purpleColor)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1)
+        .style("pointer-events", "none");
 
       // Tooltip
-      const fmtInt2 = d3.format(',d');
-      const fmtMoney2 = d3.format(',.2f');
+      const fmtInt2 = d3.format(",d");
+      const fmtMoney2 = d3.format(",.2f");
       const html = `<strong>${nearest.year}</strong><br/>
                     <span style="color:${greenColor}">Cases: ${fmtInt2(nearest.cases)}</span><br/>
                     <span style="color:${purpleColor}">Loss: $${fmtMoney2(nearest.loss)}</span>`;
 
-      d3.select('#tooltip')
+      d3.select("#tooltip")
         .html(html)
-        .style('left', (event.pageX + 10) + 'px')
-        .style('top', (event.pageY + 10) + 'px')
-        .style('display', 'block');
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY + 10) + "px")
+        .style("display", "block");
     })
-    .on('mouseleave', function () {
-      trendG.selectAll('.trend-hover-line').remove();
-      trendG.selectAll('.trend-hover-point-cases').remove();
-      trendG.selectAll('.trend-hover-point-loss').remove();
-      d3.select('#tooltip').style('display', 'none');
+    .on("mouseleave", function () {
+      trendG.selectAll(".trend-hover-line").remove();
+      trendG.selectAll(".trend-hover-point-cases").remove();
+      trendG.selectAll(".trend-hover-point-loss").remove();
+      d3.select("#tooltip").style("display", "none");
     });
 
   overlay.exit().remove();
 }
 
+
 // -------------------------------------------------------------------
-// Update the summary text and charts based on current filters
+// 8) SUMMARY + MASTER UPDATE PIPELINE
 // -------------------------------------------------------------------
 function updateControls() {
   if (!data.length) return;
 
   const { gender, age, region } = getFilters();
 
-  // Last 12 months relative to the max date in the dataset
+  // Default: last 12 months relative to max date
   let maxDate = defaultMaxDate;
   let oneYearAgo = defaultOneYearAgo;
 
@@ -666,7 +678,6 @@ function updateControls() {
       const startDate = parseInput(startVal);
       const endDate = parseInput(endVal);
 
-      // simple validation: only use if both are valid and start <= end
       if (startDate && endDate && startDate <= endDate) {
         oneYearAgo = startDate;
         maxDate = endDate;
@@ -678,7 +689,7 @@ function updateControls() {
     // Time window
     if (d.date < oneYearAgo || d.date > maxDate) return false;
 
-    // Demographic filters
+    // Demographics
     if (gender !== "all" && d.gender !== gender) return false;
     if (age !== "all" && d.ageRange !== age) return false;
     if (region !== "all" && d.region !== region) return false;
@@ -691,7 +702,6 @@ function updateControls() {
 
   const fmtInt = d3.format(",d");
   const fmtMoney = d3.format(",.2f");
-  const fmtDate = d3.timeFormat("%Y-%m-%d");
 
   const casesStr = fmtInt(totalCases);
   const lossStr = fmtMoney(totalLoss);
@@ -718,38 +728,38 @@ function updateControls() {
       </div>
     </div>
   </div>
-`;
+  `;
 
   d3.select("#summary-text").html(summaryHtml);
 
-  // --- update 3 pie charts ---
-  // updatePieChart(pieComplaintG, filtered, d => d.complaintType);
+  // Update pie charts with fully filtered data
   updatePieChart(pieCategoryG, filtered, d => d.category);
   updatePieChart(pieMethodG, filtered, d => d.method);
-  // --- end pie charts ---
 
-  // --- update yearly trend chart using demographic filters only
+  // Update yearly trend chart using demographic filters only (no date filtering)
   const demoFiltered = data.filter(d => {
-    // Demographic filters
     if (gender !== "all" && d.gender !== gender) return false;
     if (age !== "all" && d.ageRange !== age) return false;
     if (region !== "all" && d.region !== region) return false;
-
     return true;
   });
   updateTrendChart(demoFiltered);
-  // --- end trend chart ---
 
+  // Update map coloring
   updateMap();
 
+  // Debug counter
   d3.select("#debug")
     .text(`Filtered records: ${filtered.length} / ${data.length} total.`);
 }
 
+
+// -------------------------------------------------------------------
+// 9) WINDOW RESIZE HANDLER
+// -------------------------------------------------------------------
 window.addEventListener("resize", () => {
-    // Redraw map with new dimensions
-    if (canadaGeoJson) {
-        initMap();
-        updateMap(); // Re-apply the color highlights
-    }
+  if (canadaGeoJson) {
+    initMap();
+    updateMap();
+  }
 });
